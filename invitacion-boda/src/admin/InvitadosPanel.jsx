@@ -1,0 +1,91 @@
+import { useEffect, useState } from "react";
+import api from "../services/api";
+
+const InvitadosPanel = () => {
+  const [invitados, setInvitados] = useState([]);
+  const [nombre, setNombre] = useState("");
+  const [telefono, setTelefono] = useState("");
+
+  const load = async () => {
+    const res = await api.get("/invitados");
+    setInvitados(res.data);
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const crear = async () => {
+    await api.post("/invitados", { nombre, telefono });
+    setNombre("");
+    setTelefono("");
+    load();
+  };
+
+  const eliminar = async (id) => {
+    await api.delete(`/invitados/${id}`);
+    load();
+  };
+
+  return (
+    <div className="p-6">
+      <h2 className="text-xl font-bold mb-4">Invitados</h2>
+
+      {/* Crear */}
+      <div className="flex gap-2 mb-4">
+        <input
+          className="border p-2 rounded"
+          placeholder="Nombre"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+        />
+        <input
+          className="border p-2 rounded"
+          placeholder="Teléfono"
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value)}
+        />
+        <button onClick={crear} className="bg-black text-white px-4 rounded">
+          Crear
+        </button>
+      </div>
+
+      {/* Lista */}
+      <div className="bg-white rounded shadow">
+        {invitados.map((i) => (
+          <div
+            key={i._id}
+            className="flex justify-between border-b p-3 text-sm"
+          >
+            <div>
+              <b>{i.nombre}</b><br />
+              {i.confirmado ? "✅ Confirmado" : "⏳ Pendiente"}
+            </div>
+
+            <div className="flex gap-3 items-center">
+              <button
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    `http://localhost:5173/i/${i.linkUnico}`
+                  )
+                }
+                className="text-blue-600"
+              >
+                Copiar link
+              </button>
+
+              <button
+                onClick={() => eliminar(i._id)}
+                className="text-red-500"
+              >
+                X
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default InvitadosPanel;
