@@ -12,6 +12,7 @@ import { fileURLToPath } from "url";
 import http from "http";
 import { Server } from "socket.io";
 import authRoutes from "./routes/auth.js";
+import adminRoutes from "./routes/admin.js";
 
 // para servir archivos estáticos (fotos subidas)
 const __filename = fileURLToPath(import.meta.url);
@@ -40,6 +41,7 @@ app.use("/api/uploads", uploadRoutes);
 app.use("/api/fotos", fotosRoutes);
 app.use("/api/salon", salonRoutes); 
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Mongo
 mongoose.connect(process.env.MONGO_URI)
