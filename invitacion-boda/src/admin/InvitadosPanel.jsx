@@ -5,7 +5,8 @@ const InvitadosPanel = () => {
   const [invitados, setInvitados] = useState([]);
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [copiado, setCopiado] = useState(null);  // ✅ Agregar estado
+  const [copiado, setCopiado] = useState(null);
+  const [maxAsistentes, setMaxAsistentes] = useState(1);
 
   const load = async () => {
     const res = await api.get("/invitados");
@@ -20,6 +21,7 @@ const InvitadosPanel = () => {
     await api.post("/invitados", { nombre, telefono });
     setNombre("");
     setTelefono("");
+    setMaxAsistentes(1);
     load();
   };
 
@@ -57,6 +59,17 @@ const InvitadosPanel = () => {
           value={telefono}
           onChange={(e) => setTelefono(e.target.value)}
         />
+        <input className="border p-2 rounded" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+        <input className="border p-2 rounded" placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
+        <input
+          type="number"
+          min="1"
+          className="border p-2 rounded"
+          placeholder="Máx. asistentes"
+          value={maxAsistentes}
+          onChange={(e) => setMaxAsistentes(Number(e.target.value))}
+        />
+        
         <button onClick={crear} className="bg-black text-white px-4 rounded">
           Crear
         </button>
