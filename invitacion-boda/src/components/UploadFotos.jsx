@@ -11,7 +11,7 @@ const UploadFotos = ({ linkUnico }) => {
     formData.append("linkUnico", linkUnico);
 
     try {
-      await axios.post(`${import.meta.env.API_URL}/uploads`, formData);
+      await axios.post(`${import.meta.env.VITE_API_URL}/uploads`, formData);
       setOk(true);
     } catch (err) {
       console.error(err);

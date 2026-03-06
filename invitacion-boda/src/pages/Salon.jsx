@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import io from "socket.io-client";
 
-const socket = io(`${import.meta.env.API_URL}`); // 🔥 usar API_URL
+const socket = io(`${import.meta.env.VITE_API_URL}`); // 🔥 usar API_URL
 
 const Salon = () => {
   const [fotos, setFotos] = useState([]);
