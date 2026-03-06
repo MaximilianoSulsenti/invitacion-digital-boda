@@ -9,7 +9,7 @@ const RSVP = ({ linkUnico }) => {
 
   const enviar = async () => {
     try {
-      await axios.post("http://localhost:5000/api/confirmaciones", {
+      await axios.post(`${import.meta.env.API_URL}/confirmaciones`, {
         linkUnico,
         asistencia,
         personas,

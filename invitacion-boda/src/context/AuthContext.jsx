@@ -9,13 +9,20 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    try {
       const decoded = jwtDecode(token);
       setUser(decoded);
+    } catch (err) {
+      console.error("Token inválido");
+      localStorage.removeItem("token");
     }
-    setLoading(false);
-  }, []);
+  }
+
+  setLoading(false);
+}, []);
 
   const login = async (email, password) => {
     const res = await api.post("/auth/login", { email, password });

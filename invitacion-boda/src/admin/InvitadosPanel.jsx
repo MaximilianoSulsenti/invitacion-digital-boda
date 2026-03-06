@@ -66,7 +66,7 @@ const InvitadosPanel = () => {
               <button
                 onClick={() =>
                   navigator.clipboard.writeText(
-                    `http://localhost:5173/i/${i.linkUnico}`
+                    `${import.meta.env.API_URL}/i/${i.linkUnico}`
                   )
                 }
                 className="text-blue-600"
