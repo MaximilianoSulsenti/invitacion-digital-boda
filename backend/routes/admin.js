@@ -4,6 +4,7 @@ import auth from "../middlewares/auth.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Admin from "../models/Admin.js";
+import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 
@@ -11,6 +12,16 @@ router.get("/invitados", auth, async (req, res) => {
   try {
     const invitados = await Invitado.find();
     res.json(invitados);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// RUTA PARA ELIMINAR
+router.delete("/invitados/:id", auth, async (req, res) => {
+  try {
+    await Invitado.findByIdAndDelete(req.params.id);
+    res.json({ msg: "Eliminado" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
