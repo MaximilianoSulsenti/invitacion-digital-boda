@@ -13,7 +13,7 @@ const AppRouter = () => {
     <Routes>
       {/* 🌍 Invitación pública */}
       <Route path="/" element={<Home />} />
-      <Route path="/invitado/:linkUnico" element={<Invitacion />} />
+      <Route path="/i/:linkUnico" element={<Invitacion />} />
 
       {/* 🔐 Admin */}
       <Route path="/admin/login" element={<LoginAdmin />} />

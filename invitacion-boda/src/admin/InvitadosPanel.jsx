@@ -30,7 +30,7 @@ const InvitadosPanel = () => {
 
   // ✅ AGREGAR ESTA FUNCIÓN
   const copiarLink = (linkUnico) => {
-    const link = `${import.meta.env.VITE_API_URL}/i/${linkUnico}`;
+    const link = `${import.meta.env.VITE_FRONTEND_URL}/i/${linkUnico}`;
     console.log("Link a copiar:", link);
     console.log("linkUnico:", linkUnico);
     navigator.clipboard.writeText(link).then(() => {
