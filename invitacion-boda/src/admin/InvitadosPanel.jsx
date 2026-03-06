@@ -5,6 +5,7 @@ const InvitadosPanel = () => {
   const [invitados, setInvitados] = useState([]);
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [copiado, setCopiado] = useState(null);  // ✅ Agregar estado
 
   const load = async () => {
     const res = await api.get("/invitados");
@@ -25,6 +26,17 @@ const InvitadosPanel = () => {
   const eliminar = async (id) => {
     await api.delete(`/invitados/${id}`);
     load();
+  };
+
+  // ✅ AGREGAR ESTA FUNCIÓN
+  const copiarLink = (linkUnico) => {
+    const link = `${import.meta.env.VITE_API_URL}/i/${linkUnico}`;
+    console.log("Link a copiar:", link);
+    console.log("linkUnico:", linkUnico);
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiado(linkUnico);
+      setTimeout(() => setCopiado(null), 2000);
+    });
   };
 
   return (
@@ -64,14 +76,10 @@ const InvitadosPanel = () => {
 
             <div className="flex gap-3 items-center">
               <button
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    `${import.meta.env.API_URL}/i/${i.linkUnico}`
-                  )
-                }
-                className="text-blue-600"
+                onClick={() => copiarLink(i.linkUnico)}  // ✅ Cambiar
+                className={`${copiado === i.linkUnico ? "text-green-600" : "text-blue-600"}`}  // ✅ Cambiar color
               >
-                Copiar link
+                {copiado === i.linkUnico ? "✅ Copiado" : "Copiar link"}  {/* ✅ Cambiar texto */}
               </button>
 
               <button
