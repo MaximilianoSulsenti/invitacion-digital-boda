@@ -17,7 +17,7 @@ const AppRouter = () => {
 
       {/* 🌍 Público */}
       <Route path="/" element={<Home />} />
-      <Route path="/i/:linkUnico" element={<Invitacion />} />
+      <Route path="/:linkUnico" element={<Invitacion />} />
       <Route path="/galeria/:linkUnico" element={<Galeria />} />
       <Route path="/salon" element={<Salon />} />
       <Route path="/fotos" element={<SalonFotos />} />

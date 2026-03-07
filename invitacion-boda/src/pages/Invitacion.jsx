@@ -17,12 +17,21 @@ const Invitacion = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await api.get(`/invitados/link/${linkUnico}`);
+        // Intentamos cargar por SLUG (nombre-invitado)
+        const res = await api.get(`/invitados/slug/${linkUnico}`);
         setInvitado(res.data);
         setAsistentes(Math.min(res.data.asistentes || 1, res.data.maxAsistentes || 1));
         setConfirmado(res.data.confirmado);
       } catch (e) {
-        setInvitado(null);
+        // Si falla por slug, intentamos por ID corto (compatibilidad con links viejos)
+        try {
+          const resViejos = await api.get(`/invitados/link/${linkUnico}`);
+          setInvitado(resViejos.data);
+          setAsistentes(Math.min(resViejos.data.asistentes || 1, resViejos.data.maxAsistentes || 1));
+          setConfirmado(resViejos.data.confirmado);
+        } catch (err2) {
+          setInvitado(null);
+        }
       } finally {
         setLoading(false);
       }
@@ -160,7 +169,7 @@ const Invitacion = () => {
                       Máximo permitido: {invitado.maxAsistentes} personas
                     </p>
                   </div>
-                  
+
                   <div className="w-full">
                     <textarea
                       placeholder="Dejanos un mensaje o dedicatoria (opcional)..."

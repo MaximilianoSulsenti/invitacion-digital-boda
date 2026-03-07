@@ -74,13 +74,14 @@ router.get("/link/:link", async (req, res, next) => {
   res.json(invitado);
 });
 
-router.get("/slug/:slug", async (req, res, next) => {
-  const invitado = await Invitado.findOne({ slug: req.params.slug });
-
-  if (!invitado) {
-    return res.status(404).json({ msg: "Invitación no encontrada" });
+router.get("/slug/:slug", async (req, res) => {
+  try {
+    const invitado = await Invitado.findOne({ slug: req.params.slug });
+    if (!invitado) return res.status(404).json({ msg: "Invitación no encontrada" });
+    res.json(invitado);
+  } catch (error) {
+    res.status(500).json({ msg: "Error en el servidor" });
   }
-  res.json(invitado);
 });
 
 /* Confirmar asistencia */
