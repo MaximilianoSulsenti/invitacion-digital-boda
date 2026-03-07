@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import slugify from "speakingurl"; 
-import { nanoid } from "nanoid"; // 
 
 const invitadoSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
@@ -13,18 +11,15 @@ const invitadoSchema = new mongoose.Schema({
   fechaConfirmacion: { type: Date },
 }, { timestamps: true });
 
-// Middleware PRE-SAVE (mejor que validate para este caso)
 invitadoSchema.pre("save", function (next) {
-  // Solo generamos si son nuevos
   if (this.isNew) {
-    const idCorto = nanoid(6); // Genera algo como "xkP2w9"
+    // Generador ultra-simple nativo
+    const idCorto = Math.random().toString(36).substring(2, 8);
     
-    // Si no vienen del controlador, los creamos aquí
+    if (!this.linkUnico) this.linkUnico = idCorto;
     if (!this.slug) {
-      this.slug = `${slugify(this.nombre)}-${idCorto}`;
-    }
-    if (!this.linkUnico) {
-      this.linkUnico = idCorto;
+      // Slug manual simple para testear
+      this.slug = `${this.nombre.toLowerCase().replace(/\s+/g, '-')}-${idCorto}`;
     }
   }
   next();

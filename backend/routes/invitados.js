@@ -37,35 +37,44 @@ router.post("/", async (req, res) => {
   try {
     const { nombre, telefono, maxAsistentes } = req.body;
 
-    // NO generes el slug aquí, deja que el MODELO lo haga solo
+    // Aseguramos que los datos básicos existan
+    if (!nombre) return res.status(400).json({ msg: "El nombre es obligatorio" });
+
     const nuevo = new Invitado({
       nombre,
       telefono,
-      maxAsistentes: maxAsistentes || 1
+      maxAsistentes: parseInt(maxAsistentes) || 1
     });
 
-    await nuevo.save();
-    res.json(nuevo);
+    const guardado = await nuevo.save();
+    res.status(201).json(guardado);
+
   } catch (err) {
-    console.error("Error al crear:", err);
-    res.status(500).json({ msg: "Error interno", error: err.message });
+    // ESTO aparecerá en la pestaña "Logs" de Render
+    console.error("CRITICAL ERROR EN POST /invitados:", err);
+
+    res.status(500).json({
+      msg: "Error interno del servidor",
+      detalle: err.message
+    });
   }
 });
 
 /* Listar invitados */
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   const invitados = await Invitado.find().sort({ createdAt: -1 });
   res.json(invitados);
+
 });
 
 /* Obtener invitado por link */
-router.get("/link/:link", async (req, res) => {
+router.get("/link/:link", async (req, res, next) => {
   const invitado = await Invitado.findOne({ linkUnico: req.params.link });
   if (!invitado) return res.status(404).json({ msg: "No encontrado" });
   res.json(invitado);
 });
 
-router.get("/slug/:slug", async (req, res) => {
+router.get("/slug/:slug", async (req, res, next) => {
   const invitado = await Invitado.findOne({ slug: req.params.slug });
 
   if (!invitado) {
@@ -75,7 +84,7 @@ router.get("/slug/:slug", async (req, res) => {
 });
 
 /* Confirmar asistencia */
-router.post("/confirmar/:link", async (req, res) => {
+router.post("/confirmar/:link", async (req, res, next) => {
   try {
     const { asistentes } = req.body;
 
