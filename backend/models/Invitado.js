@@ -11,40 +11,33 @@ const invitadoSchema = new mongoose.Schema({
   fechaConfirmacion: { type: Date },
 }, { timestamps: true });
 
-// Middleware PRE-SAVE
-// Importante: No uses arrow functions () => {} aquí para mantener el contexto de 'this'
-invitadoSchema.pre("save", function (next) {
+// Middleware PRE-SAVE Moderno
+// Al ser una función async, Mongoose sabe que debe esperar a que termine
+// SIN necesidad de llamar a next().
+invitadoSchema.pre("save", async function () {
   const invitado = this;
 
-  // Solo generamos valores si el documento es nuevo
   if (invitado.isNew) {
-    // Generador nativo robusto
     const idCorto = Math.random().toString(36).substring(2, 8);
     
-    // 1. Asignar linkUnico si no existe
     if (!invitado.linkUnico) {
       invitado.linkUnico = idCorto;
     }
 
-    // 2. Generar Slug seguro (maneja espacios y caracteres especiales básicos)
     if (!invitado.slug && invitado.nombre) {
       const nombreLimpio = invitado.nombre
         .toLowerCase()
-        .normalize("NFD") // Separa tildes de las letras
-        .replace(/[\u0300-\u036f]/g, "") // Elimina las tildes
-        .replace(/[^a-z0-9\s-]/g, "") // Elimina todo lo que no sea letra, número o espacio
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s-]/g, "")
         .trim()
-        .replace(/\s+/g, "-"); // Cambia espacios por guiones
+        .replace(/\s+/g, "-");
       
       invitado.slug = `${nombreLimpio}-${idCorto}`;
     }
   }
-
-  // Finaliza el middleware y permite que Mongoose guarde
-  next();
+  // No hay next(). Al ser async, el "return" implícito le dice a Mongoose que continúe.
 });
 
-// Evitar errores de compilación de modelo duplicado en desarrollo
 const Invitado = mongoose.models.Invitado || mongoose.model("Invitado", invitadoSchema);
-
 export default Invitado;
