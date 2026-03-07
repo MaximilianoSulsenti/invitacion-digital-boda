@@ -48,8 +48,10 @@ router.post("/", async (req, res) => {
     });
 
     await nuevo.save();
+    console.log("Nuevo invitado creado:", nuevo);
     res.json(nuevo);
   } catch (err) {
+    console.error("Error creando invitado:", err);
     res.status(500).json({ msg: "Error creando invitado" });
   }
 });
