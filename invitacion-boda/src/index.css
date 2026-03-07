@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap');
 
 @keyframes fall {
   0% {
@@ -62,4 +64,25 @@
 
 .animate-zoom {
   animation: zoomIn 0.6s ease;
+}
+
+/* Estado inicial: invisible y un poco más abajo */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+
+/* Estado activo: visible y en su posición original */
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+};
+
+.font-cursiva {
+  font-family: 'Great Vibes', cursive;
+}
+
+.font-shelley {
+  font-family: 'Pinyon Script', cursive;
 }

@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+// Import Swiper React components
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay, EffectCoverflow } from "swiper/modules";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/effect-coverflow";
 
 const images = [
   "/img/1.jpg",
@@ -15,81 +23,106 @@ const Gallery = () => {
   const [selected, setSelected] = useState(null);
 
   return (
-    <section className="relative w-full py-28 px-4 bg-gradient-to-b from-rose-50 to-white overflow-hidden">
-
-      {/* Decoración */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-pink-200/30 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-rose-300/30 rounded-full blur-3xl" />
+    <section className="relative w-full py-24 px-4 bg-[#FDFCF0] overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />
 
       <div className="relative max-w-6xl mx-auto">
-
         {/* Título */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-serif text-rose-700 mb-4">
+          <h2 className="text-4xl md:text-5xl font-serif text-black mb-4">
             Nuestros Momentos
           </h2>
-          <p className="text-gray-500">
-            Recuerdos que construyen nuestra historia
+          <p className="font-shelley text-[#B8860B] text-3xl md:text-4xl">
+            Recuerdos de nuestra historia
           </p>
         </motion.div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {/* MÓVIL: Carrusel (Se muestra solo en pantallas pequeñas) */}
+        <div className="block md:hidden">
+          <Swiper
+            effect={"coverflow"}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={"auto"}
+            coverflowEffect={{
+              rotate: 50,
+              stretch: 0,
+              depth: 100,
+              modifier: 1,
+              slideShadows: false,
+            }}
+            autoplay={{ delay: 3000 }}
+            pagination={{ clickable: true }}
+            modules={[EffectCoverflow, Pagination, Autoplay]}
+            className="w-full pb-12"
+          >
+            {images.map((src, i) => (
+              <SwiperSlide key={i} className="w-[280px]">
+                <div 
+                  className="aspect-[4/5] bg-white p-2 rounded-2xl border border-[#B8860B]/20 shadow-lg"
+                  onClick={() => setSelected(src)}
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+
+        {/* PC: Grilla (Se muestra solo de tablets en adelante) */}
+        <div className="hidden md:grid md:grid-cols-3 gap-6">
           {images.map((src, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: i * 0.05 }}
-              viewport={{ once: true }}
+              whileHover={{ y: -5 }}
               onClick={() => setSelected(src)}
-              className="relative overflow-hidden rounded-3xl cursor-pointer group shadow-lg"
+              className="relative aspect-[4/5] overflow-hidden rounded-2xl cursor-pointer bg-white p-2 border border-[#B8860B]/10 group"
             >
-              <img
-                src={src}
-                alt=""
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition" />
+              <div className="w-full h-full overflow-hidden rounded-xl">
+                <img
+                  src={src}
+                  alt=""
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+              <div className="absolute inset-0 bg-[#B8860B]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* Lightbox */}
+      {/* Lightbox - Igual que antes */}
       <AnimatePresence>
         {selected && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-lg flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelected(null)}
           >
             <motion.div
-              initial={{ scale: 0.8 }}
+              initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              className="relative max-w-4xl w-full"
+              exit={{ scale: 0.9 }}
+              className="relative max-w-4xl w-full flex flex-col items-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <button
-                onClick={() => setSelected(null)}
-                className="absolute -top-12 right-0 text-white"
-              >
-                <X size={28} />
+              <button onClick={() => setSelected(null)} className="absolute -top-12 right-0 text-white/70">
+                <X size={32} />
               </button>
-              <img
-                src={selected}
-                alt=""
-                className="w-full h-full object-contain rounded-2xl shadow-2xl"
-              />
+              <img src={selected} className="w-full h-auto max-h-[80vh] object-contain rounded-lg shadow-2xl" alt="" />
+              <p className="mt-6 font-shelley text-[#B8860B] text-3xl">Nati & Maxi</p>
             </motion.div>
           </motion.div>
         )}

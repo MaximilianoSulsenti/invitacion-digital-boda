@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
 
 const storyData = [
   {
@@ -26,63 +25,68 @@ const storyData = [
 
 const Story = () => {
   return (
-    <section className="relative w-full py-28 px-4 bg-gradient-to-b from-white to-rose-50 overflow-hidden">
+    <section className="relative w-full py-24 px-6 bg-[#FDFCF0] overflow-hidden">
+      
+      {/* Separador superior sutil */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />
 
-      {/* Decoración */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-pink-200/30 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-rose-300/30 rounded-full blur-3xl" />
-
-      <div className="relative max-w-5xl mx-auto">
-
+      <div className="relative max-w-3xl mx-auto">
+        
         {/* Título */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1 }}
           viewport={{ once: true }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-5xl font-serif text-rose-700 mb-4">
+          <h2 className="text-4xl md:text-5xl font-serif text-black mb-4">
             Nuestra Historia
           </h2>
-          <div className="flex justify-center items-center gap-3 text-rose-400">
-            <Heart size={18} />
-            <span className="text-sm uppercase tracking-widest">Una historia de amor</span>
-            <Heart size={18} />
-          </div>
+          <p className="font-shelley text-[#B8860B] text-3xl md:text-4xl">
+            Un camino de amor
+          </p>
         </motion.div>
 
         {/* Timeline */}
-        <div className="relative border-l border-rose-200 ml-4 md:ml-0 md:pl-8 space-y-16">
-
+        <div className="relative border-l-[0.5px] border-[#B8860B]/30 ml-2 md:mx-auto md:left-0 md:right-0">
+          
           {storyData.map((item, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: -40 }}
+              initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: index * 0.1 }}
+              transition={{ duration: 0.8, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="relative pl-8"
+              className="relative pl-10 mb-16 last:mb-0"
             >
-              {/* Punto */}
-              <div className="absolute -left-[9px] top-2 w-4 h-4 bg-rose-500 rounded-full shadow-lg" />
-
-              {/* Card */}
-              <div className="backdrop-blur-xl bg-white/60 border border-white/40 rounded-3xl p-6 shadow-xl">
-                <span className="text-sm text-rose-400 font-semibold">
+              {/* Punto Dorado Estilizado */}
+              <div className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 bg-[#FDFCF0] border border-[#B8860B] rounded-full z-10" />
+              
+              {/* Contenido */}
+              <div className="flex flex-col">
+                <span className="text-[#B8860B] font-serif italic text-lg mb-1">
                   {item.year}
                 </span>
-                <h3 className="text-xl font-semibold text-rose-700 mt-1 mb-2">
+                <h3 className="text-xl font-medium text-black mb-3 tracking-wide uppercase text-[13px] md:text-sm">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {item.text}
+                <p className="text-gray-600 font-serif leading-relaxed text-sm md:text-base max-w-lg italic">
+                  "{item.text}"
                 </p>
               </div>
             </motion.div>
           ))}
 
         </div>
+
+        {/* Decoración Final */}
+        <div className="text-center mt-20 opacity-30">
+          <div className="inline-block w-1 h-1 bg-[#B8860B] rounded-full mx-1"></div>
+          <div className="inline-block w-1 h-1 bg-[#B8860B] rounded-full mx-1"></div>
+          <div className="inline-block w-1 h-1 bg-[#B8860B] rounded-full mx-1"></div>
+        </div>
+
       </div>
     </section>
   );

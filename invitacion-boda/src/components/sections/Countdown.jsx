@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const targetDate = new Date("2026-11-20T19:00:00"); // fecha boda
+const targetDate = new Date("2026-11-20T19:00:00");
 
 const Countdown = () => {
   const [timeLeft, setTimeLeft] = useState({});
@@ -28,37 +28,36 @@ const Countdown = () => {
   }, []);
 
   return (
-    <section className="relative w-full py-28 px-4 bg-gradient-to-b from-rose-50 to-white overflow-hidden">
-
-      {/* Decoraciones */}
-      <div className="absolute top-0 right-0 w-72 h-72 bg-rose-200/30 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-72 h-72 bg-pink-300/30 rounded-full blur-3xl" />
+    <section className="relative w-full py-24 px-4 bg-[#FDFCF0] overflow-hidden">
+      
+      {/* Separador superior fino */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />
 
       <div className="relative max-w-5xl mx-auto text-center">
-
-        {/* Título */}
+        
+        {/* Título Estilo Editorial */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1 }}
           viewport={{ once: true }}
-          className="mb-14"
+          className="mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-serif text-rose-700 mb-4">
-            Falta muy poco
+          <h2 className="text-3xl md:text-4xl font-serif text-black mb-4 tracking-tight">
+            Cuenta Regresiva
           </h2>
-          <p className="text-gray-500">
+          <p className="text-gray-500 font-serif italic text-sm md:text-base">
             Cada segundo nos acerca a nuestro gran día
           </p>
         </motion.div>
 
-        {/* Contador */}
+        {/* Bloques del Contador */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1.2 }}
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
         >
           {[
             { label: "Días", value: timeLeft.days },
@@ -68,17 +67,25 @@ const Countdown = () => {
           ].map((item, index) => (
             <div
               key={index}
-              className="backdrop-blur-xl bg-white/60 border border-white/40 rounded-3xl p-6 shadow-xl"
+              className="flex flex-col items-center justify-center bg-transparent border border-[#B8860B]/10 rounded-2xl p-6 md:p-8 transition-all hover:border-[#B8860B]/30"
             >
-              <div className="text-4xl md:text-5xl font-bold text-rose-600 mb-2">
+              {/* Números en Dorado */}
+              <div className="text-5xl md:text-6xl font-light text-[#B8860B] mb-2 font-serif">
                 {item.value ?? "00"}
               </div>
-              <div className="uppercase tracking-widest text-sm text-gray-500">
+              
+              {/* Etiquetas en Negro Minimalista */}
+              <div className="uppercase tracking-[0.2em] text-[10px] md:text-xs text-black font-medium">
                 {item.label}
               </div>
             </div>
           ))}
         </motion.div>
+
+        {/* Frase final pequeña */}
+        <p className="mt-16 text-[10px] md:text-xs uppercase tracking-[0.4em] text-[#B8860B]/60">
+          Nati & Maxi
+        </p>
       </div>
     </section>
   );

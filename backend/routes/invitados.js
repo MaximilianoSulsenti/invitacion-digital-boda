@@ -4,16 +4,6 @@ import crypto from "crypto";
 
 const router = express.Router();
 
-const generarSlug = (nombre) => {
-  const limpio = nombre
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, "")
-    .replace(/\s+/g, "-");
-
-  const random = crypto.randomBytes(2).toString("hex");
-
-  return `${limpio}-${random}`;
-};
 
 /* Estadísticas generales */
 router.get("/stats", async (req, res) => {
@@ -45,25 +35,20 @@ router.get("/stats", async (req, res) => {
 /* Crear invitado */
 router.post("/", async (req, res) => {
   try {
-    const { nombre, telefono, email, asistentes, maxAsistentes } = req.body;
+    const { nombre, telefono, maxAsistentes } = req.body;
 
-    const linkUnico = generarSlug(nombre);
-
+    // NO generes el slug aquí, deja que el MODELO lo haga solo
     const nuevo = new Invitado({
       nombre,
       telefono,
-      email,
-      asistentes: asistentes || 1,
-      maxAsistentes: maxAsistentes || 1,
-      linkUnico,
+      maxAsistentes: maxAsistentes || 1
     });
 
     await nuevo.save();
-    console.log("Nuevo invitado creado:", nuevo);
     res.json(nuevo);
   } catch (err) {
-    console.error("Error creando invitado:", err);
-    res.status(500).json({ msg: "Error creando invitado" });
+    console.error("Error al crear:", err);
+    res.status(500).json({ msg: "Error interno", error: err.message });
   }
 });
 
