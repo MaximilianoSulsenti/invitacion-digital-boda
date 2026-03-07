@@ -9,63 +9,93 @@ const router = express.Router();
 
 // Subida desde QR del salón (sin invitado)
 
-router.post("/", upload.single("foto"), async (req, res) => {
+router.post("/", upload.array("foto", 20), async (req, res) => {
   try {
 
-    const result = await cloudinary.uploader.upload_stream(
-      { folder: "boda" },
-      async (error, result) => {
+    const fotosGuardadas = [];
 
-        if (error) return res.status(500).json(error);
+    for (const file of req.files) {
 
-        const foto = new Foto({
-          url: result.secure_url,
-          nombre: result.public_id,
-          invitado: null,
-          aprobada: false
-        });
+      await new Promise((resolve, reject) => {
 
-        await foto.save();
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "boda" },
+          async (error, result) => {
 
-        res.json(foto);
-      }
-    );
+            if (error) return reject(error);
 
-    result.end(req.file.buffer);
+            const foto = new Foto({
+              url: result.secure_url,
+              nombre: result.public_id,
+              invitado: null,
+              aprobada: false
+            });
+
+            await foto.save();
+
+            fotosGuardadas.push(foto);
+
+            resolve();
+          }
+        );
+
+        stream.end(file.buffer);
+
+      });
+
+    }
+
+    res.json(fotosGuardadas);
 
   } catch (e) {
     res.status(500).json({ msg: "Error upload" });
   }
 });
 
-router.post("/:link", upload.single("foto"), async (req, res) => {
+router.post("/:link", upload.array("foto", 20), async (req, res) => {
   try {
+
     const invitado = await Invitado.findOne({ linkUnico: req.params.link });
-    if (!invitado) return res.status(404).json({ msg: "Invitado no encontrado" });
 
-    const result = await cloudinary.uploader.upload_stream(
-      { folder: "boda" },
-      async (error, result) => {
-        if (error) return res.status(500).json(error);
+    if (!invitado) {
+      return res.status(404).json({ msg: "Invitado no encontrado" });
+    }
 
-        const foto = new Foto({
-          url: result.secure_url,
-          nombre: result.public_id,
-          invitado: invitado._id
-        });
+    const fotosGuardadas = [];
 
-        await foto.save();
+    for (const file of req.files) {
 
-        // 🔴 TIEMPO REAL
-        const io = req.app.get("io");
-        if (foto.aprobada) {
-          io.emit("nueva-foto", foto);
-        }
-        res.json(foto);
-      }
-    );
+      await new Promise((resolve, reject) => {
 
-    result.end(req.file.buffer);
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "boda" },
+          async (error, result) => {
+
+            if (error) return reject(error);
+
+            const foto = new Foto({
+              url: result.secure_url,
+              nombre: result.public_id,
+              invitado: invitado._id,
+              aprobada: false
+            });
+
+            await foto.save();
+
+            fotosGuardadas.push(foto);
+
+            resolve();
+          }
+        );
+
+        stream.end(file.buffer);
+
+      });
+
+    }
+
+    res.json(fotosGuardadas);
+
   } catch (e) {
     res.status(500).json({ msg: "Error upload" });
   }

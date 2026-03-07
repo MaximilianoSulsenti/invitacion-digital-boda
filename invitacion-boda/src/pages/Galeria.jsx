@@ -22,7 +22,7 @@ const Galeria = () => {
         <h2 className="text-xl font-bold mb-4">Subí tus fotos 📸</h2>
 
         <input
-          type="file" accept="image/*"
+          type="file" accept="image/*" multiple
           onChange={(e) => setFile(e.target.files[0])}
           className="mb-4"
         />
