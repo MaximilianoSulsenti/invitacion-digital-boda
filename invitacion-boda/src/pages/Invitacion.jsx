@@ -17,26 +17,33 @@ const Invitacion = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        // Intentamos cargar por SLUG (nombre-invitado)
+        setLoading(true);
+        // linkUnico ahora contiene el texto de la URL (ej: "juan-perez-abc12")
+        // Llamamos a la ruta de slug en el backend
         const res = await api.get(`/invitados/slug/${linkUnico}`);
+
         setInvitado(res.data);
         setAsistentes(Math.min(res.data.asistentes || 1, res.data.maxAsistentes || 1));
         setConfirmado(res.data.confirmado);
       } catch (e) {
-        // Si falla por slug, intentamos por ID corto (compatibilidad con links viejos)
+        console.error("Error cargando invitado por slug:", e);
+        // Si falla por slug, intentamos por linkUnico por si es un link viejo
         try {
-          const resViejos = await api.get(`/invitados/link/${linkUnico}`);
-          setInvitado(resViejos.data);
-          setAsistentes(Math.min(resViejos.data.asistentes || 1, resViejos.data.maxAsistentes || 1));
-          setConfirmado(resViejos.data.confirmado);
-        } catch (err2) {
+          const resViejo = await api.get(`/invitados/link/${linkUnico}`);
+          setInvitado(resViejo.data);
+          setAsistentes(Math.min(resViejo.data.asistentes || 1, resViejo.data.maxAsistentes || 1));
+          setConfirmado(resViejo.data.confirmado);
+        } catch (e2) {
           setInvitado(null);
         }
       } finally {
         setLoading(false);
       }
     };
-    load();
+
+    if (linkUnico) {
+      load();
+    }
   }, [linkUnico]);
 
   const confirmar = async () => {
