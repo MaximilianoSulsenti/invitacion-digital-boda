@@ -12,6 +12,7 @@ const Invitacion = () => {
   const [confirmado, setConfirmado] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [mensaje, setMensaje] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -32,7 +33,7 @@ const Invitacion = () => {
   const confirmar = async () => {
     try {
       setErrorMsg("");
-      await api.post(`/invitados/confirmar/${linkUnico}`, { asistentes });
+      await api.post(`/invitados/confirmar/${linkUnico}`, { asistentes, mensaje });
       setConfirmado(true);
       setMostrarConfirmacion(false);
     } catch (error) {
@@ -45,7 +46,7 @@ const Invitacion = () => {
       <div className="w-8 h-8 border-4 border-[#B8860B]/20 border-t-[#B8860B] rounded-full animate-spin" />
     </div>
   );
-  
+
   if (!invitado) return (
     <div className="min-h-screen bg-[#FDFCF0] flex items-center justify-center p-6 text-center">
       <p className="font-serif italic text-gray-500">Lo sentimos, esta invitación no es válida o ha expirado.</p>
@@ -54,10 +55,10 @@ const Invitacion = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFCF0] text-[#2D2D2D] font-sans selection:bg-[#B8860B]/10 overflow-x-hidden">
-      
+
       {/* 🌿 CABECERA / HERO */}
       <section className="relative h-screen flex flex-col items-center justify-center px-6 text-center">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2 }}
@@ -68,8 +69,8 @@ const Invitacion = () => {
           <div className="h-px w-20 bg-[#B8860B]/30 mx-auto my-6" />
           <p className="font-serif italic text-lg text-gray-600">Nos encantaría que nos acompañes en nuestro gran día.</p>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1.5 }}
@@ -81,7 +82,7 @@ const Invitacion = () => {
 
       {/* 📸 FOTO Y DETALLES */}
       <section className="max-w-2xl mx-auto px-6 py-20 space-y-16">
-        <motion.div 
+        <motion.div
           whileInView={{ opacity: 1, scale: 1 }}
           initial={{ opacity: 0, scale: 0.95 }}
           viewport={{ once: true }}
@@ -117,7 +118,7 @@ const Invitacion = () => {
       {/* 💌 SECCIÓN DE ACCIÓN (CONFIRMACIÓN) */}
       <section className="bg-white rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.03)] py-20 px-6">
         <div className="max-w-md mx-auto text-center">
-          
+
           <AnimatePresence mode="wait">
             {!confirmado ? (
               !mostrarConfirmacion ? (
@@ -132,9 +133,9 @@ const Invitacion = () => {
                   </button>
                 </motion.div>
               ) : (
-                <motion.div 
-                  key="form" 
-                  initial={{ opacity: 0, y: 20 }} 
+                <motion.div
+                  key="form"
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-8"
                 >
@@ -145,12 +146,12 @@ const Invitacion = () => {
 
                   <div className="flex flex-col items-center space-y-4">
                     <div className="flex items-center gap-6 bg-[#FDFCF0] p-2 rounded-2xl">
-                      <button 
+                      <button
                         onClick={() => setAsistentes(Math.max(1, asistentes - 1))}
                         className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm text-xl"
                       >-</button>
                       <span className="text-2xl font-serif w-8">{asistentes}</span>
-                      <button 
+                      <button
                         onClick={() => setAsistentes(Math.min(invitado.maxAsistentes, asistentes + 1))}
                         className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm text-xl"
                       >+</button>
@@ -159,17 +160,27 @@ const Invitacion = () => {
                       Máximo permitido: {invitado.maxAsistentes} personas
                     </p>
                   </div>
+                  
+                  <div className="w-full">
+                    <textarea
+                      placeholder="Dejanos un mensaje o dedicatoria (opcional)..."
+                      value={mensaje}
+                      onChange={(e) => setMensaje(e.target.value)}
+                      className="w-full bg-[#FDFCF0] border-none p-4 rounded-2xl text-sm font-serif italic focus:ring-1 focus:ring-[#B8860B]/20 outline-none resize-none"
+                      rows="3"
+                    />
+                  </div>
 
                   {errorMsg && <p className="text-red-500 text-xs italic">{errorMsg}</p>}
 
                   <div className="space-y-3">
-                    <button 
+                    <button
                       onClick={confirmar}
                       className="w-full bg-black text-white py-5 rounded-2xl font-bold uppercase text-[10px] tracking-[0.3em] shadow-xl"
                     >
                       Confirmar Ahora
                     </button>
-                    <button 
+                    <button
                       onClick={() => setMostrarConfirmacion(false)}
                       className="text-xs text-gray-400 uppercase tracking-widest"
                     >
@@ -179,9 +190,9 @@ const Invitacion = () => {
                 </motion.div>
               )
             ) : (
-              <motion.div 
-                key="success" 
-                initial={{ scale: 0.9, opacity: 0 }} 
+              <motion.div
+                key="success"
+                initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="py-10"
               >

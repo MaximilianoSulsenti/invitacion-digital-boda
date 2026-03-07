@@ -86,7 +86,7 @@ router.get("/slug/:slug", async (req, res, next) => {
 /* Confirmar asistencia */
 router.post("/confirmar/:link", async (req, res, next) => {
   try {
-    const { asistentes } = req.body;
+    const { asistentes, mensaje } = req.body;
 
     const invitado = await Invitado.findOne({ linkUnico: req.params.link });
     if (!invitado) {
@@ -105,6 +105,7 @@ router.post("/confirmar/:link", async (req, res, next) => {
 
     invitado.confirmado = true;
     invitado.asistentes = asistentes;
+    invitado.mensaje = mensaje || "";
     invitado.fechaConfirmacion = new Date();
 
     await invitado.save();
