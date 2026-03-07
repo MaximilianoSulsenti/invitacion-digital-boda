@@ -4,6 +4,17 @@ import crypto from "crypto";
 
 const router = express.Router();
 
+const generarSlug = (nombre) => {
+  const limpio = nombre
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, "-");
+
+  const random = crypto.randomBytes(2).toString("hex");
+
+  return `${limpio}-${random}`;
+};
+
 /* Estadísticas generales */
 router.get("/stats", async (req, res) => {
   try {
@@ -36,7 +47,7 @@ router.post("/", async (req, res) => {
   try {
     const { nombre, telefono, email, asistentes, maxAsistentes } = req.body;
 
-    const linkUnico = crypto.randomBytes(8).toString("hex");
+    const linkUnico = generarSlug(nombre);
 
     const nuevo = new Invitado({
       nombre,
@@ -44,7 +55,7 @@ router.post("/", async (req, res) => {
       email,
       asistentes: asistentes || 1,
       maxAsistentes: maxAsistentes || 1,
-      linkUnico
+      linkUnico,
     });
 
     await nuevo.save();
@@ -66,6 +77,15 @@ router.get("/", async (req, res) => {
 router.get("/link/:link", async (req, res) => {
   const invitado = await Invitado.findOne({ linkUnico: req.params.link });
   if (!invitado) return res.status(404).json({ msg: "No encontrado" });
+  res.json(invitado);
+});
+
+router.get("/slug/:slug", async (req, res) => {
+  const invitado = await Invitado.findOne({ slug: req.params.slug });
+
+  if (!invitado) {
+    return res.status(404).json({ msg: "Invitación no encontrada" });
+  }
   res.json(invitado);
 });
 

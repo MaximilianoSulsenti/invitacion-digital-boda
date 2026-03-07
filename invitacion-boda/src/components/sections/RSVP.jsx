@@ -1,65 +1,118 @@
 import { useState } from "react";
 import axios from "axios";
 
-const RSVP = ({ linkUnico }) => {
+const RSVP = ({ invitado, slug }) => {
+
   const [asistencia, setAsistencia] = useState(true);
   const [personas, setPersonas] = useState(1);
   const [mensaje, setMensaje] = useState("");
   const [ok, setOk] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const enviar = async () => {
+
+    if (!slug) {
+      setError("Invitación inválida");
+      return;
+    }
+
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/confirmaciones`, {
-        linkUnico,
-        asistencia,
-        personas,
-        mensaje,
-      });
+
+      setLoading(true);
+      setError("");
+
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/invitados/confirmar/${slug}`,
+        {
+          asistentes: asistencia ? personas : 0,
+          mensaje
+        }
+      );
+
       setOk(true);
+
     } catch (err) {
+
       console.error(err);
+      setError("No se pudo enviar la confirmación");
+
+    } finally {
+
+      setLoading(false);
+
     }
   };
 
   return (
-    <section className="p-10 bg-neutral-900">
-      <h2 className="text-2xl mb-4">Confirmar asistencia</h2>
+    <section className="p-10 bg-neutral-900 text-center">
+
+      <h2 className="text-3xl mb-4 font-light">
+        Confirmar asistencia
+      </h2>
+
+      {invitado && (
+        <p className="mb-6 text-neutral-300">
+          Invitación para <strong>{invitado.nombre}</strong>
+        </p>
+      )}
 
       {ok ? (
-        <p className="text-green-400">¡Confirmación enviada! 💚</p>
+
+        <p className="text-green-400 text-lg">
+          ¡Gracias por confirmar! 💚
+        </p>
+
       ) : (
-        <div className="flex flex-col gap-4 max-w-md">
+
+        <div className="flex flex-col gap-4 max-w-md mx-auto">
+
           <select
-            className="p-2 text-black"
+            className="p-2 text-black rounded"
             onChange={(e) => setAsistencia(e.target.value === "true")}
           >
             <option value="true">Asistiré</option>
             <option value="false">No podré asistir</option>
           </select>
 
-          <input
-            type="number"
-            min="1"
-            className="p-2 text-black"
-            placeholder="Cantidad de personas"
-            value={personas}
-            onChange={(e) => setPersonas(e.target.value)}
-          />
+          {asistencia && (
+
+            <input
+              type="number"
+              min="1"
+              max={invitado?.maxAsistentes || 5}
+              className="p-2 text-black rounded"
+              placeholder="Cantidad de personas"
+              value={personas}
+              onChange={(e) => setPersonas(e.target.value)}
+            />
+
+          )}
 
           <textarea
-            className="p-2 text-black"
-            placeholder="Mensaje"
+            className="p-2 text-black rounded"
+            placeholder="Mensaje (opcional)"
             onChange={(e) => setMensaje(e.target.value)}
           />
 
+          {error && (
+            <p className="text-red-400 text-sm">
+              {error}
+            </p>
+          )}
+
           <button
             onClick={enviar}
-            className="bg-white text-black py-2 rounded-xl hover:bg-gray-200"
+            disabled={loading}
+            className="bg-white text-black py-2 rounded-xl hover:bg-gray-200 transition"
           >
-            Enviar confirmación
+            {loading ? "Enviando..." : "Enviar confirmación"}
           </button>
+
         </div>
+
       )}
+
     </section>
   );
 };

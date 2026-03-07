@@ -7,6 +7,37 @@ import auth from "../middlewares/auth.js";
 
 const router = express.Router();
 
+// Subida desde QR del salón (sin invitado)
+
+router.post("/", upload.single("foto"), async (req, res) => {
+  try {
+
+    const result = await cloudinary.uploader.upload_stream(
+      { folder: "boda" },
+      async (error, result) => {
+
+        if (error) return res.status(500).json(error);
+
+        const foto = new Foto({
+          url: result.secure_url,
+          nombre: result.public_id,
+          invitado: null,
+          aprobada: false
+        });
+
+        await foto.save();
+
+        res.json(foto);
+      }
+    );
+
+    result.end(req.file.buffer);
+
+  } catch (e) {
+    res.status(500).json({ msg: "Error upload" });
+  }
+});
+
 router.post("/:link", upload.single("foto"), async (req, res) => {
   try {
     const invitado = await Invitado.findOne({ linkUnico: req.params.link });

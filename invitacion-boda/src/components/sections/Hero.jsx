@@ -26,14 +26,6 @@ const Hero = () => {
           Queremos compartir este momento único con vos.
         </p>
 
-        {/* CTA único fuerte */}
-        <a
-          href="#confirmacion"
-          className="inline-block px-10 py-3 rounded-full bg-rose-500 text-white font-medium shadow-lg hover:bg-rose-600 transition-all duration-300 hover:scale-105"
-        >
-          Confirmar asistencia 💌
-        </a>
-
       </div>
     </section>
   );

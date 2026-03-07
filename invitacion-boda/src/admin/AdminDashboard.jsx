@@ -21,14 +21,8 @@ const AdminDashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="bg-white p-4 shadow flex justify-between">
-        <b>Panel Admin</b>
-        <button onClick={logout} className="text-red-500">
-          Salir
-        </button>
-      </div>
-
+    
+    <div>
       {/* 📊 Estadísticas */}
       {stats && (
         <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-4">

@@ -4,6 +4,7 @@ const invitadoSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
   telefono: { type: String },
   email: { type: String },
+  slug: { type: String, unique: true },
   linkUnico: { type: String, unique: true },
   confirmado: { type: Boolean, default: false },
   asistentes: { type: Number, default: 1 }, // por si viene +1

@@ -6,7 +6,6 @@ const Invitacion = () => {
   const { linkUnico } = useParams();
   const [invitado, setInvitado] = useState(null);
   const [asistentes, setAsistentes] = useState(1);
-  const [acompanante, setAcompanante] = useState([]);
   const [loading, setLoading] = useState(true);
   const [confirmado, setConfirmado] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
