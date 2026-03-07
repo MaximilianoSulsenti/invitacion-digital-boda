@@ -52,7 +52,7 @@ const RSVP = ({ invitado, slug }) => {
         {/* Título Estilo Shelley */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-serif text-black mb-4 tracking-tight">
-            R.S.V.P
+             INVITACION
           </h2>
           <p className="font-shelley text-[#B8860B] text-3xl md:text-4xl">
             Confirma tu asistencia
