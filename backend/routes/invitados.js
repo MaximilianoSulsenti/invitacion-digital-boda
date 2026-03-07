@@ -72,7 +72,7 @@ router.get("/link/:link", async (req, res) => {
 /* Confirmar asistencia */
 router.post("/confirmar/:link", async (req, res) => {
   try {
-    const { asistentes, acompanante } = req.body;
+    const { asistentes } = req.body;
 
     const invitado = await Invitado.findOne({ linkUnico: req.params.link });
     if (!invitado) {
@@ -91,7 +91,6 @@ router.post("/confirmar/:link", async (req, res) => {
 
     invitado.confirmado = true;
     invitado.asistentes = asistentes;
-    invitado.acompanante = acompanante || [];
     invitado.fechaConfirmacion = new Date();
 
     await invitado.save();

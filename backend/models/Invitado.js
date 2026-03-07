@@ -8,7 +8,6 @@ const invitadoSchema = new mongoose.Schema({
   confirmado: { type: Boolean, default: false },
   asistentes: { type: Number, default: 1 }, // por si viene +1
   maxAsistentes: { type: Number, default: 1 }, // para limitar invitados con +1
-  acompanante: [{ nombre: String, apellido: String }],
   fechaConfirmacion: { type: Date },
 }, { timestamps: true });
 
