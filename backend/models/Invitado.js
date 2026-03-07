@@ -11,18 +11,40 @@ const invitadoSchema = new mongoose.Schema({
   fechaConfirmacion: { type: Date },
 }, { timestamps: true });
 
+// Middleware PRE-SAVE
+// Importante: No uses arrow functions () => {} aquí para mantener el contexto de 'this'
 invitadoSchema.pre("save", function (next) {
-  if (this.isNew) {
-    // Generador ultra-simple nativo
+  const invitado = this;
+
+  // Solo generamos valores si el documento es nuevo
+  if (invitado.isNew) {
+    // Generador nativo robusto
     const idCorto = Math.random().toString(36).substring(2, 8);
     
-    if (!this.linkUnico) this.linkUnico = idCorto;
-    if (!this.slug) {
-      // Slug manual simple para testear
-      this.slug = `${this.nombre.toLowerCase().replace(/\s+/g, '-')}-${idCorto}`;
+    // 1. Asignar linkUnico si no existe
+    if (!invitado.linkUnico) {
+      invitado.linkUnico = idCorto;
+    }
+
+    // 2. Generar Slug seguro (maneja espacios y caracteres especiales básicos)
+    if (!invitado.slug && invitado.nombre) {
+      const nombreLimpio = invitado.nombre
+        .toLowerCase()
+        .normalize("NFD") // Separa tildes de las letras
+        .replace(/[\u0300-\u036f]/g, "") // Elimina las tildes
+        .replace(/[^a-z0-9\s-]/g, "") // Elimina todo lo que no sea letra, número o espacio
+        .trim()
+        .replace(/\s+/g, "-"); // Cambia espacios por guiones
+      
+      invitado.slug = `${nombreLimpio}-${idCorto}`;
     }
   }
+
+  // Finaliza el middleware y permite que Mongoose guarde
   next();
 });
 
-export default mongoose.model("Invitado", invitadoSchema);
+// Evitar errores de compilación de modelo duplicado en desarrollo
+const Invitado = mongoose.models.Invitado || mongoose.model("Invitado", invitadoSchema);
+
+export default Invitado;
