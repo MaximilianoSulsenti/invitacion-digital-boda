@@ -18,7 +18,7 @@ const InvitadosPanel = () => {
   }, []);
 
   const crear = async () => {
-    await api.post("/invitados", { nombre, telefono });
+    await api.post("/invitados", { nombre, telefono, maxAsistentes });
     setNombre("");
     setTelefono("");
     setMaxAsistentes(1);
