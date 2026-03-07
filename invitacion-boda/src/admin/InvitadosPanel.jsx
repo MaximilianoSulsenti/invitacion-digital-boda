@@ -30,8 +30,7 @@ const InvitadosPanel = () => {
     load();
   };
 
-  // ✅ AGREGAR ESTA FUNCIÓN
-  const copiarLink = (linkUnico) => {
+    const copiarLink = (linkUnico) => {
     const link = `${import.meta.env.VITE_FRONTEND_URL}/i/${linkUnico}`;
     console.log("Link a copiar:", link);
     console.log("linkUnico:", linkUnico);
@@ -59,8 +58,7 @@ const InvitadosPanel = () => {
           value={telefono}
           onChange={(e) => setTelefono(e.target.value)}
         />
-        <input className="border p-2 rounded" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
-        <input className="border p-2 rounded" placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
+      
         <input
           type="number"
           min="1"
@@ -69,7 +67,7 @@ const InvitadosPanel = () => {
           value={maxAsistentes}
           onChange={(e) => setMaxAsistentes(Number(e.target.value))}
         />
-        
+
         <button onClick={crear} className="bg-black text-white px-4 rounded">
           Crear
         </button>
