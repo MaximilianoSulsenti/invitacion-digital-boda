@@ -165,7 +165,7 @@ const Salon = () => {
 
           <img
             src={optimizar(destacada.url)}
-            className="max-h-[85vh] rounded-xl shadow-2xl border-4 border-white"
+            className="max-h-[85vh] rounded-xl shadow-2xl border-4 border-white animate-zoom"
             alt="Foto destacada"
           />
 
