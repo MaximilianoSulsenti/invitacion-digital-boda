@@ -6,10 +6,11 @@ const Invitacion = () => {
   const { linkUnico } = useParams();
   const [invitado, setInvitado] = useState(null);
   const [asistentes, setAsistentes] = useState(1);
+  const [acompanantes, setAcompanantes] = useState([]);  // ✅ Nuevo estado
   const [loading, setLoading] = useState(true);
   const [confirmado, setConfirmado] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false); // ✅ Agregar estado
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -18,6 +19,7 @@ const Invitacion = () => {
         setInvitado(res.data);
         setAsistentes(Math.min(res.data.asistentes || 1, res.data.maxAsistentes || 1));
         setConfirmado(res.data.confirmado);
+        setAcompanantes(res.data.acompanantes || []);  // ✅ Cargar acompañantes
       } catch (e) {
         setInvitado(null);
       } finally {
@@ -27,12 +29,27 @@ const Invitacion = () => {
     load();
   }, [linkUnico]);
 
+  const agregarAcompanante = () => {
+    if (acompanantes.length < asistentes - 1) {  // -1 porque el principal ya cuenta
+      setAcompanantes([...acompanantes, { nombre: "", apellido: "" }]);
+    }
+  };
+
+  const actualizarAcompanante = (index, field, value) => {
+    const nuevos = [...acompanantes];
+    nuevos[index][field] = value;
+    setAcompanantes(nuevos);
+  };
+
   const confirmar = async () => {
     try {
       setErrorMsg("");
-      await api.post(`/invitados/confirmar/${linkUnico}`, { asistentes });
+      await api.post(`/invitados/confirmar/${linkUnico}`, {
+        asistentes,
+        acompanantes  // ✅ Enviar acompañantes
+      });
       setConfirmado(true);
-      setMostrarConfirmacion(false); // ✅ Ocultar formulario
+      setMostrarConfirmacion(false);
     } catch (error) {
       if (error.response && error.response.data.msg) {
         setErrorMsg(error.response.data.msg);
@@ -81,7 +98,10 @@ const Invitacion = () => {
                 min="1"
                 max={invitado.maxAsistentes}
                 value={asistentes}
-                onChange={(e) => setAsistentes(Number(e.target.value))}
+                onChange={(e) => {
+                  setAsistentes(Number(e.target.value));
+                  setAcompanantes([]);  // Reset acompañantes si cambia cantidad
+                }}
                 className="border p-2 rounded w-full text-center"
               />
               {errorMsg && <div className="text-red-600 text-sm mt-2">❌ {errorMsg}</div>}
@@ -89,6 +109,37 @@ const Invitacion = () => {
                 Podés confirmar hasta {invitado.maxAsistentes} personas
               </p>
             </div>
+
+            {/* ✅ NUEVO: Campos para acompañantes */}
+            {asistentes > 1 && (
+              <div className="mb-4">
+                <p className="mb-2">Nombres de acompañantes:</p>
+                {acompanantes.map((a, index) => (
+                  <div key={index} className="flex gap-2 mb-2">
+                    <input
+                      placeholder="Nombre"
+                      value={a.nombre}
+                      onChange={(e) => actualizarAcompanante(index, "nombre", e.target.value)}
+                      className="border p-2 rounded flex-1"
+                    />
+                    <input
+                      placeholder="Apellido"
+                      value={a.apellido}
+                      onChange={(e) => actualizarAcompanante(index, "apellido", e.target.value)}
+                      className="border p-2 rounded flex-1"
+                    />
+                  </div>
+                ))}
+                {acompanantes.length < asistentes - 1 && (
+                  <button
+                    onClick={agregarAcompanante}
+                    className="text-blue-600 text-sm"
+                  >
+                    + Agregar acompañante
+                  </button>
+                )}
+              </div>
+            )}
 
             <button onClick={confirmar} className="bg-black text-white w-full py-2 rounded hover:opacity-90">
               Confirmar
