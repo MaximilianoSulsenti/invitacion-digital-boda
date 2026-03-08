@@ -97,7 +97,14 @@ router.post("/confirmar/:link", async (req, res, next) => {
   try {
     const { asistentes, mensaje } = req.body;
 
-    const invitado = await Invitado.findOne({ linkUnico: req.params.link });
+    // Busca por slug o por linkUnico
+    const invitado = await Invitado.findOne({
+      $or: [
+        { linkUnico: req.params.link },
+        { slug: req.params.link }
+      ]
+    });
+
     if (!invitado) {
       return res.status(404).json({ msg: "Invitado no encontrado" });
     }

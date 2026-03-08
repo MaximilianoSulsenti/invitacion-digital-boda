@@ -17,12 +17,17 @@ const RSVP = ({ invitado, slug }) => {
     }
   }, [invitado]);
 
+  const maxPermitido = invitado?.maxAsistentes || 10;
+
   const enviar = async () => {
     if (!slug) {
       setError("Necesitas un link válido para confirmar");
       return;
     }
-
+    if (asistencia && (personas < 1 || personas > maxPermitido)) {
+      setError(`La cantidad de personas debe ser entre 1 y ${maxPermitido}`);
+      return;
+    }
     try {
       setLoading(true);
       setError("");
@@ -44,23 +49,17 @@ const RSVP = ({ invitado, slug }) => {
 
   return (
     <section className="relative w-full py-24 px-4 bg-[#FDFCF0] overflow-hidden">
-      {/* Separador sutil */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />
-
       <div className="relative max-w-xl mx-auto">
-        
-        {/* Título Estilo Shelley */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-serif text-black mb-4 tracking-tight">
-             INVITACION
+            INVITACION
           </h2>
           <p className="font-shelley text-[#B8860B] text-3xl md:text-4xl">
             Confirma tu asistencia
           </p>
         </div>
-
-        {/* Tarjeta del Formulario */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           className="bg-white border border-[#B8860B]/20 rounded-3xl p-8 md:p-12 shadow-[0_10px_40px_rgba(184,134,11,0.05)]"
@@ -70,15 +69,15 @@ const RSVP = ({ invitado, slug }) => {
               <p className="text-gray-500 font-serif italic mb-1">Invitación para:</p>
               <p className="text-xl font-medium text-black uppercase tracking-widest">{invitado.nombre}</p>
               <p className="text-[10px] text-[#B8860B] mt-2 uppercase tracking-widest opacity-70">
-                Máximo permitido: {invitado.maxAsistentes} personas
+                Máximo permitido: {maxPermitido} personas
               </p>
             </div>
           )}
 
           {ok ? (
-            <motion.div 
-              initial={{ scale: 0.9 }} 
-              animate={{ scale: 1 }} 
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
               className="text-center py-10"
             >
               <div className="flex justify-center mb-6 text-[#B8860B]">
@@ -91,7 +90,6 @@ const RSVP = ({ invitado, slug }) => {
             </motion.div>
           ) : (
             <div className="flex flex-col gap-6">
-              {/* Selector de Asistencia */}
               <div className="flex flex-col gap-2">
                 <label className="text-[10px] uppercase tracking-[0.2em] text-gray-400 ml-1">¿Podrás asistir?</label>
                 <select
@@ -103,9 +101,8 @@ const RSVP = ({ invitado, slug }) => {
                   <option value="false">Lamentablemente no puedo</option>
                 </select>
               </div>
-
               {asistencia && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   className="flex flex-col gap-2"
@@ -114,15 +111,13 @@ const RSVP = ({ invitado, slug }) => {
                   <input
                     type="number"
                     min="1"
-                    max={invitado?.maxAsistentes || 10}
+                    max={maxPermitido}
                     className="w-full bg-[#FDFCF0] border border-[#B8860B]/20 p-3 rounded-xl text-black focus:outline-none focus:border-[#B8860B]"
                     value={personas}
                     onChange={(e) => setPersonas(e.target.value)}
                   />
                 </motion.div>
               )}
-
-              {/* Mensaje */}
               <div className="flex flex-col gap-2">
                 <label className="text-[10px] uppercase tracking-[0.2em] text-gray-400 ml-1">Mensaje o restricciones</label>
                 <textarea
@@ -133,20 +128,17 @@ const RSVP = ({ invitado, slug }) => {
                   onChange={(e) => setMensaje(e.target.value)}
                 />
               </div>
-
               {error && (
                 <p className="text-red-500 text-xs italic text-center bg-red-50 p-2 rounded-lg">
                   {error}
                 </p>
               )}
-
-              {/* Botón Dorado */}
               <button
                 onClick={enviar}
-                disabled={loading || !slug}
+                disabled={loading || !slug || (asistencia && (personas < 1 || personas > maxPermitido))}
                 className={`mt-4 py-4 rounded-full text-xs uppercase tracking-[0.3em] font-bold transition-all duration-300 ${
-                  loading 
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed" 
+                  loading
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                     : "bg-black text-white hover:bg-[#B8860B] shadow-xl"
                 }`}
               >
@@ -155,8 +147,6 @@ const RSVP = ({ invitado, slug }) => {
             </div>
           )}
         </motion.div>
-
-        {/* Frase Final */}
         <p className="text-center mt-12 font-shelley text-[#B8860B] text-2xl">
           Nati & Maxi
         </p>
