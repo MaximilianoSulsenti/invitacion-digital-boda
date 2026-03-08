@@ -6,6 +6,7 @@ import { Calendar, MapPin, Users, Heart, CheckCircle2 } from "lucide-react";
 
 const Invitacion = () => {
   const { linkUnico } = useParams();
+  console.log("Invitacion MONTADO", linkUnico);
   const [invitado, setInvitado] = useState(null);
   const [asistentes, setAsistentes] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -18,24 +19,14 @@ const Invitacion = () => {
     const load = async () => {
       try {
         setLoading(true);
-        // linkUnico ahora contiene el texto de la URL (ej: "juan-perez-abc12")
-        // Llamamos a la ruta de slug en el backend
+        // Cambia esta línea:
         const res = await api.get(`/invitados/slug/${linkUnico}`);
-
+        console.log("Invitado recibido:", res.data);
         setInvitado(res.data);
         setAsistentes(Math.min(res.data.asistentes || 1, res.data.maxAsistentes || 1));
         setConfirmado(res.data.confirmado);
       } catch (e) {
-        console.error("Error cargando invitado por slug:", e);
-        // Si falla por slug, intentamos por linkUnico por si es un link viejo
-        try {
-          const resViejo = await api.get(`/invitados/link/${linkUnico}`);
-          setInvitado(resViejo.data);
-          setAsistentes(Math.min(resViejo.data.asistentes || 1, resViejo.data.maxAsistentes || 1));
-          setConfirmado(resViejo.data.confirmado);
-        } catch (e2) {
-          setInvitado(null);
-        }
+        setInvitado(null);
       } finally {
         setLoading(false);
       }

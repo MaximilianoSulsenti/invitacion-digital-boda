@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 
 import Hero from "../components/sections/Hero";
 import EventDetails from "../components/sections/EventDetails";
@@ -13,15 +13,19 @@ import Footer from "../components/sections/Footer";
 
 const Home = () => {
   const [params] = useSearchParams();
-  const invParam = params.get("inv"); 
+  const invParam = params.get("inv");
+  const { linkUnico } = useParams(); // Para la ruta /:linkUnico
   const [invitado, setInvitado] = useState(null);
-  const [loading, setLoading] = useState(!!invParam);
+  const [loading, setLoading] = useState(!!invParam || !!linkUnico);
 
-  // UN SOLO useEffect para cargar datos y disparar el scroll
   useEffect(() => {
-    if (!invParam) return;
+    if (!invParam && !linkUnico) return;
 
-    fetch(`${import.meta.env.VITE_API_URL}/invitados/link/${invParam}`)
+    const url = invParam
+      ? `${import.meta.env.VITE_API_URL}/invitados/link/${invParam}`
+      : `${import.meta.env.VITE_API_URL}/invitados/slug/${linkUnico}`;
+
+    fetch(url)
       .then(res => {
         if (!res.ok) throw new Error("No encontrado");
         return res.json();
@@ -30,12 +34,11 @@ const Home = () => {
         setInvitado(data);
         setLoading(false);
 
-        // EFECTO DE SCROLL: Se dispara después de cargar los datos
         setTimeout(() => {
           window.scrollBy({
-            top: 300, 
+            top: 300,
             left: 0,
-            behavior: 'smooth' 
+            behavior: 'smooth'
           });
         }, 2500);
       })
@@ -43,9 +46,8 @@ const Home = () => {
         console.error(err);
         setLoading(false);
       });
-  }, [invParam]); // Usamos invParam que es la variable real
+  }, [invParam, linkUnico]);
 
-  // El efecto de los observadores para el Fade-in (Este está perfecto)
   useEffect(() => {
     const observerOptions = { threshold: 0.15 };
     const observer = new IntersectionObserver((entries) => {
@@ -60,7 +62,7 @@ const Home = () => {
     sections.forEach((section) => observer.observe(section));
 
     return () => observer.disconnect();
-  }, [invitado, loading]); // Agregamos loading para que re-ejecute al terminar de cargar
+  }, [invitado, loading]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">Cargando invitación...</div>;
 
@@ -71,7 +73,7 @@ const Home = () => {
       <div className="reveal"><Countdown /></div>
       <div className="reveal"><Story /></div>
       <div className="reveal"><Gallery /></div>
-      <div className="reveal"><RSVP invitado={invitado} slug={invParam} /></div>
+      <div className="reveal"><RSVP invitado={invitado} slug={linkUnico || invParam} /></div>
       <div className="reveal"><Location /></div>
       <div className="reveal"><Info /></div>
       <div className="reveal"><Footer /></div>

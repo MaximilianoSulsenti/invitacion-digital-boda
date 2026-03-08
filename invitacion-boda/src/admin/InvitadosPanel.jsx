@@ -42,16 +42,16 @@ const InvitadosPanel = () => {
   };
 
   const copiarLink = (invitado) => {
-    const link = `${import.meta.env.VITE_FRONTEND_URL}/${invitado.slug}`;
+    const link = `${import.meta.env.VITE_FRONTEND_URL}/${invitado.slug}`; // ✅ Usa slug
     navigator.clipboard.writeText(link).then(() => {
-      setCopiado(invitado.linkUnico);
+      setCopiado(invitado.slug); // ✅ Usa slug para el feedback visual
       setTimeout(() => setCopiado(null), 2000);
     });
   };
 
   const enviarWhatsApp = (invitado, esRecordatorio = false) => {
     const numero = `549${invitado.telefono}`;
-    const link = `${import.meta.env.VITE_FRONTEND_URL}/${invitado.slug}`;
+    const link = `${import.meta.env.VITE_FRONTEND_URL}/${invitado.slug}`; // ✅ Usa slug
 
     const mensaje = esRecordatorio
       ? `Hola ${invitado.nombre}! 😊\n\nTe recordamos confirmar tu asistencia a nuestra boda 💍\n\nPodés hacerlo acá:\n${link}\n\n¡Nos ayudaría mucho tu confirmación!`
@@ -232,8 +232,11 @@ const InvitadosPanel = () => {
                 <button onClick={() => enviarWhatsApp(i)} className="p-2 text-green-600 bg-green-50 rounded-lg" title="WhatsApp">
                   <MessageCircle size={18} />
                 </button>
-                <button onClick={() => copiarLink(i)} className={`p-2 rounded-lg transition ${copiado === i.linkUnico ? "bg-green-600 text-white" : "bg-blue-50 text-blue-600"}`}>
-                  {copiado === i.linkUnico ? <Check size={18} /> : <Copy size={18} />}
+                <button
+                  onClick={() => copiarLink(i)}
+                  className={`p-2 rounded-lg transition ${copiado === i.slug ? "bg-green-600 text-white" : "bg-blue-50 text-blue-600"}`}
+                >
+                  {copiado === i.slug ? <Check size={18} /> : <Copy size={18} />}
                 </button>
                 <button onClick={() => setQrInvitado(i)} className="p-2 text-purple-600 bg-purple-50 rounded-lg">
                   <QrCode size={18} />
@@ -256,7 +259,7 @@ const InvitadosPanel = () => {
 
             <div className="bg-white p-4 rounded-2xl border border-gray-100 inline-block shadow-inner">
               <QRCodeCanvas
-                value={`${import.meta.env.VITE_FRONTEND_URL}/${qrInvitado.slug}`}
+                value={`${import.meta.env.VITE_FRONTEND_URL}/${qrInvitado.slug}`} // ✅ Usa slug
                 size={200}
                 level="H"
               />
