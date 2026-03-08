@@ -74,10 +74,18 @@ router.get("/link/:link", async (req, res, next) => {
   res.json(invitado);
 });
 
+// En tu backend: cambia la ruta de slug para que sea más robusta
 router.get("/slug/:slug", async (req, res) => {
   try {
-    const invitado = await Invitado.findOne({ slug: req.params.slug });
-    if (!invitado) return res.status(404).json({ msg: "Invitación no encontrada" });
+    // Busca por slug O por linkUnico por las dudas
+    const invitado = await Invitado.findOne({
+      $or: [
+        { slug: req.params.slug },
+        { linkUnico: req.params.slug }
+      ]
+    });
+
+    if (!invitado) return res.status(404).json({ msg: "Invitado no encontrado" });
     res.json(invitado);
   } catch (error) {
     res.status(500).json({ msg: "Error en el servidor" });
