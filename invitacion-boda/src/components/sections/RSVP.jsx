@@ -7,6 +7,7 @@ const RSVP = ({ invitado, slug }) => {
   const [asistencia, setAsistencia] = useState(true);
   const [personas, setPersonas] = useState(1);
   const [mensaje, setMensaje] = useState("");
+  const [cancion, setCancion] = useState("");
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,6 +21,10 @@ const RSVP = ({ invitado, slug }) => {
   const maxPermitido = invitado?.maxAsistentes || 10;
 
   const enviar = async () => {
+    if (!invitado) {
+      setError("No tienes una invitación personalizada.");
+      return;
+    }
     if (!slug) {
       setError("Necesitas un link válido para confirmar");
       return;
@@ -28,14 +33,15 @@ const RSVP = ({ invitado, slug }) => {
       setError(`La cantidad de personas debe ser entre 1 y ${maxPermitido}`);
       return;
     }
+    setError("");
     try {
       setLoading(true);
-      setError("");
       await axios.post(
         `${import.meta.env.VITE_API_URL}/invitados/confirmar/${slug}`,
         {
           asistentes: asistencia ? Number(personas) : 0,
-          mensaje
+          mensaje,
+          cancion
         }
       );
       setOk(true);
@@ -55,6 +61,28 @@ const RSVP = ({ invitado, slug }) => {
           <h2 className="text-4xl font-serif text-black mb-4 tracking-tight">
             INVITACION
           </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="mb-8 bg-[#FDFCF0] border border-[#B8860B]/30 rounded-2xl p-4 shadow-sm max-w-xs mx-auto"
+          >
+            <h3 className="text-base font-serif text-[#B8860B] mb-2 text-center">Detalles de la tarjeta</h3>
+            <ul className="text-xs text-gray-700 font-serif space-y-1 text-center">
+              <li>
+                <span className="font-semibold text-black">Precio:</span> $97.600 por persona , menores de 0 a 3 no abonan y de 4 a 8 abonan el 50% del valor total.
+              </li>
+              <li>
+                <span className="font-semibold text-black">Menú:</span> Entrada, Plato Principal (Costillar y vacio a la estaca), postre, bebidas y barra libre (Sin limite toda la noche) y desayuno al finalizar la fiesta.
+              </li>
+              <li>
+                <span className="font-semibold text-black">Restricciones:</span> Aclararnos en el formulario si tenes alguna restriccion alimentaria.
+              </li>
+            </ul>
+            <br />
+            <span className="block text-[12px] text-gray-600 italic mt-2 text-center">
+              Precio sujeto a modificación por IPC
+            </span>
+          </motion.div>
           <p className="font-shelley text-[#B8860B] text-3xl md:text-4xl">
             Confirma tu asistencia
           </p>
@@ -119,13 +147,23 @@ const RSVP = ({ invitado, slug }) => {
                 </motion.div>
               )}
               <div className="flex flex-col gap-2">
-                <label className="text-[10px] uppercase tracking-[0.2em] text-gray-400 ml-1">Mensaje o restricciones</label>
+                <label className="text-[10px] uppercase tracking-[0.2em] text-gray-400 ml-1">Restricciones</label>
                 <textarea
-                  className="w-full bg-[#FDFCF0] border border-[#B8860B]/20 p-3 rounded-xl text-black focus:outline-none focus:border-[#B8860B] placeholder:text-gray-300"
-                  placeholder="Restricciones alimentarias, canciones que no pueden faltar..."
-                  rows="3"
+                  className="w-full bg-[#FDFCF0] border border-[#B8860B]/20 p-2 rounded-xl text-black focus:outline-none focus:border-[#B8860B] placeholder:text-gray-300"
+                  placeholder="Dejanos tu mensaje con tu Restriccion Alimentaria..."
+                  rows={2}
                   value={mensaje}
                   onChange={(e) => setMensaje(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] uppercase tracking-[0.2em] text-gray-400 ml-1">Tu Canción Favorita</label>
+                <textarea
+                  className="w-full bg-[#FDFCF0] border border-[#B8860B]/20 p-2 rounded-xl text-black focus:outline-none focus:border-[#B8860B] placeholder:text-gray-300"
+                  placeholder="Que canción no puede faltar el día de la boda..."
+                  rows={2}
+                  value={cancion}
+                  onChange={(e) => setCancion(e.target.value)}
                 />
               </div>
               {error && (
@@ -135,7 +173,7 @@ const RSVP = ({ invitado, slug }) => {
               )}
               <button
                 onClick={enviar}
-                disabled={loading || !slug || (asistencia && (personas < 1 || personas > maxPermitido))}
+                disabled={loading}
                 className={`mt-4 py-4 rounded-full text-xs uppercase tracking-[0.3em] font-bold transition-all duration-300 ${
                   loading
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed"

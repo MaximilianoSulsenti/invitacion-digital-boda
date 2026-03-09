@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import { Gift, Shirt, Info as InfoIcon } from "lucide-react";
 
 const Info = () => {
-  const alias = "boda.nati.y.maxi"; // Actualizado
-  const cbu = "0000003100000000000000";
+  const alias = ""; // Actualizado
+  const cbu = "";
 
   return (
     <section className="relative w-full py-24 px-4 bg-[#FDFCF0] overflow-hidden">
-      
+
       {/* Separador superior */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />
 
@@ -45,11 +45,10 @@ const Info = () => {
             </div>
             <h3 className="text-xs uppercase tracking-[0.2em] font-bold text-black mb-4">Regalos</h3>
             <p className="text-gray-500 font-serif italic text-sm leading-relaxed mb-6">
-              Tu presencia es nuestro mejor regalo. Pero si deseás colaborar con nuestra luna de miel:
+              Nuestro mejor regalo es que nos acompañes en este dia tan especial, pero si queres ayudarnos a comenzar esta nueva etapa podes colaborar a traves del siguiente alias:
             </p>
             <div className="bg-[#FDFCF0] border border-[#B8860B]/10 rounded-2xl p-4 text-[11px] md:text-xs tracking-widest text-black flex flex-col gap-2">
-              <p><span className="text-[#B8860B] font-bold">ALIAS:</span> {alias}</p>
-              <p><span className="text-[#B8860B] font-bold">CBU:</span> {cbu}</p>
+              <p><span className="text-[#B8860B] font-bold">Lo Compartiremos el dia de la boda</span> {alias}</p>
             </div>
           </motion.div>
 
@@ -66,14 +65,9 @@ const Info = () => {
             </div>
             <h3 className="text-xs uppercase tracking-[0.2em] font-bold text-black mb-4">Dress Code</h3>
             <p className="text-gray-500 font-serif italic text-sm leading-relaxed mb-6">
-              Elegante Formal.<br />Sugerimos tonos neutros, tierra y pasteles.
+              Elegante formal.<br />
+              ¡Vení como más te guste dentro de este estilo!
             </p>
-            <div className="flex justify-center gap-3 mt-2">
-              <span className="w-5 h-5 rounded-full bg-[#E5D3B3] border border-black/5" title="Arena" />
-              <span className="w-5 h-5 rounded-full bg-[#D2B48C] border border-black/5" title="Canela" />
-              <span className="w-5 h-5 rounded-full bg-[#F5F5DC] border border-black/5" title="Beige" />
-              <span className="w-5 h-5 rounded-full bg-[#A9A9A9] border border-black/5" title="Gris suave" />
-            </div>
           </motion.div>
 
           {/* Tips Adicionales */}
@@ -89,6 +83,7 @@ const Info = () => {
             </div>
             <h3 className="text-xs uppercase tracking-[0.2em] font-bold text-black mb-4">Tips Importantes</h3>
             <ul className="text-gray-500 font-serif italic text-sm space-y-3">
+              <li>Confirmar asistencia antes del 10 de octubre</li>
               <li>Llegar 15 min antes del inicio</li>
               <li>Habrá fotógrafo profesional</li>
               <li>Evento exclusivo para adultos</li>

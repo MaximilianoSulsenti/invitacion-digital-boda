@@ -2,24 +2,29 @@ import { motion } from "framer-motion";
 
 const storyData = [
   {
-    year: "2018",
-    title: "Nos conocimos",
-    text: "Dos caminos distintos que se cruzaron sin saber que ese encuentro cambiaría todo.",
+    year: "2016",
+    title: "El comienzo de todo",
+    text: "Despues de varios años de amistad, nos dimos cuenta de que estábamos destinados a estar juntos.",
+  },
+  {
+    year: "2017",
+    title: "Nos elegimos",
+    text: "Entre risas, sueños y desafíos decidimos convivir juntos.",
   },
   {
     year: "2020",
-    title: "Nos elegimos",
-    text: "Entre risas, sueños y desafíos, entendimos que queríamos caminar juntos.",
+    title: "El gran Desafio",
+    text: "En medio del caos , recibimos un regalo de dios, nuestro hermoso Angel.",
   },
   {
     year: "2023",
-    title: "El compromiso",
-    text: "Una promesa, un sí, y una historia que empieza una nueva etapa.",
+    title: "La Resiliencia",
+    text: "Aprendimos que amar no es solo celebrar los momentos lindos sino sostenernos en las tormentas, abrazarnos en la incertidumbre, y cada dia elegimos seguir adelante juntos.",
   },
   {
     year: "2026",
-    title: "Nuestro gran día",
-    text: "El comienzo de una vida juntos, con amor, familia y sueños compartidos.",
+    title: "Nuestra Gran Dia",
+    text: "Unidos por una promesa y un destino común, celebrando el comienzo de nuestra vida juntos y el inicio de esta nueva etapa. Nada nos hace más felices que empezar este viaje junto a las personas que más queremos.",
   },
 ];
 

@@ -11,12 +11,15 @@ import "swiper/css/pagination";
 import "swiper/css/effect-coverflow";
 
 const images = [
-  "/img/1.jpg",
-  "/img/2.jpg",
-  "/img/3.jpg",
-  "/img/4.jpg",
-  "/img/5.jpg",
-  "/img/6.jpg",
+  "/img/anopasado.jpeg",
+  "/img/momentos.jpeg",
+  "/img/foto2016.jpeg",
+  "/img/del2020.jpeg",
+  "/img/inolvidable2021.jpeg",
+  "/img/mardel.jpeg",
+  "/img/centralito.jpeg",
+  "/img/masviajes.jpeg",
+  "/img/mendoza.jpeg",
 ];
 
 const Gallery = () => {

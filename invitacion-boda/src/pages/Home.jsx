@@ -70,11 +70,11 @@ const Home = () => {
     <>
       <Hero invitado={invitado} />
       <div className="reveal"><EventDetails /></div>
+      <div className="reveal"><Location /></div>
       <div className="reveal"><Countdown /></div>
       <div className="reveal"><Story /></div>
       <div className="reveal"><Gallery /></div>
       <div className="reveal"><RSVP invitado={invitado} slug={linkUnico || invParam} /></div>
-      <div className="reveal"><Location /></div>
       <div className="reveal"><Info /></div>
       <div className="reveal"><Footer /></div>
     </>
