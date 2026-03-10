@@ -16,7 +16,7 @@ const Location = () => {
       nombre: "Salón Los Altos Del Rio",
       direccion: "Salón de Eventos Los Altos Del Rio, Rosario, Santa Fe",
       mapsUrl: "https://maps.google.com/?q=Los+Altos+Del+Rio+Rosario",
-      iframe: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3348.123456789!2d-60.63!3d-32.94!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzLCsDU2JzM0LjAiUyA2MMKwMzcnNDguMCJX!5e0!3m2!1ses!2sar!4v123456789" ,
+      iframe: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3348.123456789!2d-60.63!3d-32.94!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzLCsDU2JzM0LjAiUyA2MMKwMzcnNDguMCJX!5e0!3m2!1ses!2sar!4v123456789",
       // Pega aquí el embed real del salón
       icono: "🪩",
     }
@@ -24,6 +24,21 @@ const Location = () => {
 
   return (
     <section className="relative w-full py-24 px-4 bg-[#FDFCF0] overflow-hidden">
+
+      {/* Imagen de fondo decorativa */}
+      <div
+        className="absolute inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: "url('/img/fondocontenedor.jpeg')", // Cambia por tu imagen
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          opacity: 0.60, // Ajusta la opacidad a gusto
+          pointerEvents: "none"
+        }}
+        aria-hidden="true"
+      />
+
       {/* Separador superior sutil */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />
 

@@ -3,7 +3,20 @@ import { motion } from "framer-motion";
 const Footer = () => {
   return (
     <footer className="relative w-full py-20 bg-[#FDFCF0] overflow-hidden text-center">
-      
+      {/* Imagen de fondo decorativa */}
+      <div
+        className="absolute inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: "url('/img/fondocontenedor.jpeg')", // Cambia por tu imagen
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          opacity: 0.60, // Ajusta la opacidad a gusto
+          pointerEvents: "none"
+        }}
+        aria-hidden="true"
+      />
+
       {/* Línea divisoria minimalista */}
       <div className="flex items-center justify-center gap-4 mb-12">
         <div className="w-12 h-[0.5px] bg-[#B8860B]/30"></div>

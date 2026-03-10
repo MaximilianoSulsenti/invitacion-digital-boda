@@ -6,8 +6,20 @@ const Info = () => {
   const cbu = "";
 
   return (
-    <section className="relative w-full py-24 px-4 bg-[#FDFCF0] overflow-hidden">
-
+    <section className="relative w-full py-24 px-4 bg-[#FDFCF0]  overflow-hidden">
+      {/* Imagen de fondo decorativa */}
+      <div
+        className="absolute inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: "url('/img/fondocontenedor.jpeg')", // Cambia por tu imagen
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          opacity: 0.60, // Ajusta la opacidad a gusto
+          pointerEvents: "none"
+        }}
+        aria-hidden="true"
+      />
       {/* Separador superior */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />
 
@@ -85,9 +97,8 @@ const Info = () => {
             <ul className="text-gray-500 font-serif italic text-sm space-y-3">
               <li>Confirmar asistencia antes del 10 de octubre</li>
               <li>Llegar 15 min antes del inicio</li>
-              <li>Habrá fotógrafo profesional</li>
-              <li>Evento exclusivo para adultos</li>
-              <li>Estacionamiento privado</li>
+              <li>Veni elegante y comodo para Disfrutar y Bailar</li>
+              <li>Los Niños son Bienvenidos</li>
             </ul>
           </motion.div>
 

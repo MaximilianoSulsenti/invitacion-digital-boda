@@ -31,6 +31,19 @@ const storyData = [
 const Story = () => {
   return (
     <section className="relative w-full py-24 px-6 bg-[#FDFCF0] overflow-hidden">
+      {/* Imagen de fondo decorativa */}
+      <div
+        className="absolute inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: "url('/img/fondocontenedor.jpeg')", // Cambia por tu imagen
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          opacity: 0.60, // Ajusta la opacidad a gusto
+          pointerEvents: "none"
+        }}
+        aria-hidden="true"
+      />
       
       {/* Separador superior sutil */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />

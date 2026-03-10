@@ -28,13 +28,26 @@ const Countdown = () => {
   }, []);
 
   return (
-    <section className="relative w-full py-24 px-4 bg-[#FDFCF0] overflow-hidden">
-      
+    <section className="relative w-full py-24 px-4 bg-[#FDFCF0]  overflow-hidden">
+
+      {/* Imagen de fondo decorativa */}
+      <div
+        className="absolute inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: "url('/img/fondocontenedor.jpeg')", // Cambia por tu imagen
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          opacity: 0.60, // Ajusta la opacidad a gusto
+          pointerEvents: "none"
+        }}
+        aria-hidden="true"
+      />
       {/* Separador superior fino */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />
 
       <div className="relative max-w-5xl mx-auto text-center">
-        
+
         {/* Título Estilo Editorial */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -73,7 +86,7 @@ const Countdown = () => {
               <div className="text-5xl md:text-6xl font-light text-[#B8860B] mb-2 font-serif">
                 {item.value ?? "00"}
               </div>
-              
+
               {/* Etiquetas en Negro Minimalista */}
               <div className="uppercase tracking-[0.2em] text-[10px] md:text-xs text-black font-medium">
                 {item.label}

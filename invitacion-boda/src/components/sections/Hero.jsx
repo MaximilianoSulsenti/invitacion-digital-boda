@@ -1,6 +1,19 @@
 const Hero = ({ invitado }) => {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center bg-[#FDFCF0] overflow-hidden pt-10 pb-20">
+    <section className="relative min-h-screen bg-[#FDFCF0] flex flex-col items-center justify-center overflow-hidden pt-10 pb-20">
+      {/* Imagen de fondo decorativa */}
+      <div
+        className="absolute inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: "url('/img/fondocontenedor.jpeg')", // Cambia por tu imagen
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          opacity: 0.60, // Ajusta la opacidad a gusto
+          pointerEvents: "none"
+        }}
+        aria-hidden="true"
+      />
 
       {/* Sutiles reflejos marfil */}
       <div className="absolute top-[-5%] left-[-5%] w-[400px] h-[400px] bg-[#F3E5AB]/10 rounded-full blur-[100px]"></div>

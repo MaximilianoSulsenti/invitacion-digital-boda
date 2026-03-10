@@ -55,6 +55,19 @@ const RSVP = ({ invitado, slug }) => {
 
   return (
     <section className="relative w-full py-24 px-4 bg-[#FDFCF0] overflow-hidden">
+      {/* Imagen de fondo decorativa */}
+      <div
+        className="absolute inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: "url('/img/fondocontenedor.jpeg')", // Cambia por tu imagen
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          opacity: 0.60, // Ajusta la opacidad a gusto
+          pointerEvents: "none"
+        }}
+        aria-hidden="true"
+      />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-[#B8860B]/20" />
       <div className="relative max-w-xl mx-auto">
         <div className="text-center mb-12">
@@ -174,11 +187,10 @@ const RSVP = ({ invitado, slug }) => {
               <button
                 onClick={enviar}
                 disabled={loading}
-                className={`mt-4 py-4 rounded-full text-xs uppercase tracking-[0.3em] font-bold transition-all duration-300 ${
-                  loading
+                className={`mt-4 py-4 rounded-full text-xs uppercase tracking-[0.3em] font-bold transition-all duration-300 ${loading
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                     : "bg-black text-white hover:bg-[#B8860B] shadow-xl"
-                }`}
+                  }`}
               >
                 {loading ? "Enviando..." : "Confirmar Asistencia"}
               </button>
