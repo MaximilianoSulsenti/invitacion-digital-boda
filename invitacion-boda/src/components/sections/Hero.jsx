@@ -1,4 +1,35 @@
+import { useEffect } from "react";
+
 const Hero = ({ invitado }) => {
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      const segundaSeccion = document.getElementById("segunda-seccion");
+      if (segundaSeccion) {
+        setTimeout(() => {
+          // Animación personalizada de scroll suave
+          const targetY = segundaSeccion.getBoundingClientRect().top + window.pageYOffset;
+          const startY = window.pageYOffset;
+          const duration = 1500; // duración en ms
+          const startTime = performance.now();
+
+          function animateScroll(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = progress < 0.5
+              ? 2 * progress * progress
+              : -1 + (4 - 2 * progress) * progress;
+            window.scrollTo(0, startY + (targetY - startY) * ease);
+            if (progress < 1) {
+              requestAnimationFrame(animateScroll);
+            }
+          }
+          requestAnimationFrame(animateScroll);
+        }, 3000);
+      }
+    }
+  }, []);
+
   return (
     <section className="relative min-h-screen bg-[#FDFCF0] flex flex-col items-center justify-center overflow-hidden pt-10 pb-20">
       {/* Imagen de fondo decorativa */}

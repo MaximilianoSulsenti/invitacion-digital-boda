@@ -3,7 +3,7 @@ import { Calendar, Clock, MapPin } from "lucide-react";
 
 const EventDetails = () => {
   return (
-    <section className="relative w-full py-24 px-4 bg-[#FDFCF0]  overflow-hidden">
+    <section id= "segunda-seccion" className="relative w-full py-24 px-4 bg-[#FDFCF0]  overflow-hidden">
       {/* Imagen de fondo decorativa */}
       <div
         className="absolute inset-0 w-full h-full z-0"
