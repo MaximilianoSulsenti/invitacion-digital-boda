@@ -95,7 +95,7 @@ router.get("/slug/:slug", async (req, res) => {
 /* Confirmar asistencia */
 router.post("/confirmar/:link", async (req, res, next) => {
   try {
-    const { asistentes, mensaje } = req.body;
+    const { asistentes, mensaje, cancion } = req.body;
 
     // Busca por slug o por linkUnico
     const invitado = await Invitado.findOne({
@@ -122,9 +122,12 @@ router.post("/confirmar/:link", async (req, res, next) => {
     invitado.confirmado = true;
     invitado.asistentes = asistentes;
     invitado.mensaje = mensaje || "";
+    invitado.cancion = cancion || "";
     invitado.fechaConfirmacion = new Date();
 
+   console.log ("ANTES DE GUARDAR:", invitado);
     await invitado.save();
+    console.log ("DESPUES DE GUARDAR:", invitado);
 
     res.json({ msg: "Confirmado correctamente", invitado });
 

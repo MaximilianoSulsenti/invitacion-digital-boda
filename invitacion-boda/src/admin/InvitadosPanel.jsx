@@ -70,6 +70,7 @@ const InvitadosPanel = () => {
       "Asistentes": i.confirmado ? i.asistentes : 0,
       "Cupo Máximo": i.maxAsistentes,
       "Mensaje / Dedicatoria": i.mensaje || "",
+      "Cancion favorita": i.cancion || "",
       "Fecha de Confirmación": i.fechaConfirmacion ? new Date(i.fechaConfirmacion).toLocaleDateString() : "-"
     }));
 
@@ -211,6 +212,12 @@ const InvitadosPanel = () => {
                 {i.mensaje && (
                   <p className="text-[11px] text-[#B8860B] font-serif italic line-clamp-1 border-l-2 border-[#B8860B]/20 pl-2 mt-1">
                     "{i.mensaje}"
+                  </p>
+                )}
+                {/* Canción favorita visible si existe */}
+                {i.cancion && (
+                  <p className="text-[11px] text-blue-700 font-serif italic line-clamp-1 border-l-2 border-blue-200 pl-2 mt-1">
+                    🎵 "{i.cancion}"
                   </p>
                 )}
               </div>

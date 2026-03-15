@@ -7,7 +7,7 @@ const router = express.Router();
 // Crear confirmación (RSVP)
 router.post("/", async (req, res) => {
   try {
-    const { linkUnico, asistencia, personas, mensaje } = req.body;
+    const { linkUnico, asistencia, personas, mensaje, cancion } = req.body;
 
     // Buscar invitado por link único
     const invitado = await Invitado.findOne({ linkUnico });
@@ -19,11 +19,15 @@ router.post("/", async (req, res) => {
       asistencia,
       personas,
       mensaje,
+      // Si quieres guardar la canción también en el modelo Confirmacion, descomenta la siguiente línea:
+      // cancion,
     });
     await confirmacion.save();
 
-    // Marcar invitado como confirmado
+    // Marcar invitado como confirmado y guardar mensaje y cancion
     invitado.confirmado = true;
+    if (mensaje) invitado.mensaje = mensaje;
+    if (cancion) invitado.cancion = cancion;
     await invitado.save();
 
     res.status(201).json(confirmacion);

@@ -6,6 +6,7 @@ const invitadoSchema = new mongoose.Schema({
   slug: { type: String, unique: true },
   linkUnico: { type: String, unique: true },
   mensaje : { type: String, default: "" },
+  cancion : { type: String, default: "" },
   confirmado: { type: Boolean, default: false },
   asistentes: { type: Number, default: 1 },
   maxAsistentes: { type: Number, default: 1 },
