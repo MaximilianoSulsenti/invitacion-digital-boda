@@ -16,7 +16,11 @@ const RSVP = ({ invitado, slug }) => {
     if (invitado?.asistentes) {
       setPersonas(invitado.asistentes);
     }
-  }, [invitado]);
+    // Verifica si ya confirmó este invitado usando localStorage
+    if (slug && localStorage.getItem(`rsvp_${slug}`) === "ok") {
+      setOk(true);
+    }
+  }, [invitado, slug]);
 
   const maxPermitido = invitado?.maxAsistentes || 10;
 
@@ -45,6 +49,10 @@ const RSVP = ({ invitado, slug }) => {
         }
       );
       setOk(true);
+      // Guarda en localStorage que este invitado ya confirmó
+      if (slug) {
+        localStorage.setItem(`rsvp_${slug}`, "ok");
+      }
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.msg || "No se pudo enviar la confirmación");
