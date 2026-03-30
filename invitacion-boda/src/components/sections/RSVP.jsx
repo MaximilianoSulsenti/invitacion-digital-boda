@@ -90,7 +90,7 @@ const RSVP = ({ invitado, slug }) => {
             <h3 className="text-base font-serif text-[#B8860B] mb-2 text-center">Detalles de la tarjeta</h3>
             <ul className="text-xs text-gray-700 font-serif space-y-1 text-center">
               <li>
-                <span className="font-semibold text-black">Precio:</span> $97.600 por persona , menores de 0 a 3 no abonan y de 4 a 8 abonan el 50% del valor total.
+                <span className="font-semibold text-black">Precio:</span> $100.430 por persona , menores de 0 a 3 no abonan y de 4 a 8 abonan el 50% del valor total.
               </li>
               <li>
                 <span className="font-semibold text-black">Menú:</span> Entrada, Plato Principal (Costillar y vacio a la estaca), postre, bebidas y barra libre (Sin limite toda la noche) y desayuno al finalizar la fiesta.
