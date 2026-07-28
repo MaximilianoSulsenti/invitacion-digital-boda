@@ -44,6 +44,22 @@ app.use("/api/salon", salonRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 
+// Manejo centralizado de errores (incluye errores de multer)
+app.use((err, _req, res, _next) => {
+  if (err?.name === "MulterError") {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ msg: "La imagen supera el tamaño máximo permitido (8 MB)" });
+    }
+    return res.status(400).json({ msg: err.message });
+  }
+
+  if (err) {
+    return res.status(500).json({ msg: err.message || "Error interno del servidor" });
+  }
+
+  return res.status(500).json({ msg: "Error interno del servidor" });
+});
+
 // Mongo
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB conectado ✅"))

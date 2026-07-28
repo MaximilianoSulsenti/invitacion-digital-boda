@@ -7,53 +7,78 @@ import auth from "../middlewares/auth.js";
 
 const router = express.Router();
 
+const extraerMensajeError = (error) => {
+  if (!error) return "Error upload";
+  return (
+    error.message ||
+    error.error?.message ||
+    error.error?.description ||
+    "Error upload"
+  );
+};
+
+const subirArchivoACloudinary = (file, invitadoId = null) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "boda",
+        resource_type: "image",
+      },
+      async (error, result) => {
+        if (error) return reject(error);
+
+        if (!result?.secure_url || !result?.public_id) {
+          return reject(new Error("Cloudinary no devolvió una URL válida"));
+        }
+
+        try {
+          const foto = new Foto({
+            url: result.secure_url,
+            nombre: result.public_id,
+            invitado: invitadoId,
+            aprobada: false,
+          });
+
+          await foto.save();
+          resolve(foto);
+        } catch (dbError) {
+          reject(dbError);
+        }
+      }
+    );
+
+    stream.end(file.buffer);
+  });
+
 // Subida desde QR del salón (sin invitado)
 
 router.post("/", upload.array("foto", 20), async (req, res) => {
   try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ msg: "No se recibió ninguna foto" });
+    }
 
     const fotosGuardadas = [];
 
     for (const file of req.files) {
-
-      await new Promise((resolve, reject) => {
-
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "boda" },
-          async (error, result) => {
-
-            if (error) return reject(error);
-
-            const foto = new Foto({
-              url: result.secure_url,
-              nombre: result.public_id,
-              invitado: null,
-              aprobada: false
-            });
-
-            await foto.save();
-
-            fotosGuardadas.push(foto);
-
-            resolve();
-          }
-        );
-
-        stream.end(file.buffer);
-
-      });
-
+      const foto = await subirArchivoACloudinary(file);
+      fotosGuardadas.push(foto);
     }
 
     res.json(fotosGuardadas);
 
   } catch (e) {
-    res.status(500).json({ msg: "Error upload" });
+    const detalle = extraerMensajeError(e);
+    console.error("Error en /api/fotos:", detalle);
+    res.status(500).json({ msg: detalle });
   }
 });
 
 router.post("/:link", upload.array("foto", 20), async (req, res) => {
   try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ msg: "No se recibió ninguna foto" });
+    }
 
     const invitado = await Invitado.findOne({ linkUnico: req.params.link });
 
@@ -64,40 +89,16 @@ router.post("/:link", upload.array("foto", 20), async (req, res) => {
     const fotosGuardadas = [];
 
     for (const file of req.files) {
-
-      await new Promise((resolve, reject) => {
-
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "boda" },
-          async (error, result) => {
-
-            if (error) return reject(error);
-
-            const foto = new Foto({
-              url: result.secure_url,
-              nombre: result.public_id,
-              invitado: invitado._id,
-              aprobada: false
-            });
-
-            await foto.save();
-
-            fotosGuardadas.push(foto);
-
-            resolve();
-          }
-        );
-
-        stream.end(file.buffer);
-
-      });
-
+      const foto = await subirArchivoACloudinary(file, invitado._id);
+      fotosGuardadas.push(foto);
     }
 
     res.json(fotosGuardadas);
 
   } catch (e) {
-    res.status(500).json({ msg: "Error upload" });
+    const detalle = extraerMensajeError(e);
+    console.error(`Error en /api/fotos/${req.params.link}:`, detalle);
+    res.status(500).json({ msg: detalle });
   }
 });
 

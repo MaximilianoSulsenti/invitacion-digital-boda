@@ -3,20 +3,138 @@ import api from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { Image as ImageIcon, Upload, CheckCircle2, X, Plus } from "lucide-react";
 
+const MAX_ORIGINAL_FILE_SIZE_MB = 20;
+const MAX_ORIGINAL_FILE_SIZE_BYTES = MAX_ORIGINAL_FILE_SIZE_MB * 1024 * 1024;
+const TARGET_FILE_SIZE_MB = 4;
+const TARGET_FILE_SIZE_BYTES = TARGET_FILE_SIZE_MB * 1024 * 1024;
+const MAX_DIMENSION = 1920;
+
+const cargarImagen = (file) =>
+  new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("No se pudo leer la imagen"));
+    };
+
+    img.src = url;
+  });
+
+const canvasToBlob = (canvas, type, quality) =>
+  new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) return reject(new Error("No se pudo comprimir la imagen"));
+      resolve(blob);
+    }, type, quality);
+  });
+
+const comprimirImagen = async (file) => {
+  const img = await cargarImagen(file);
+
+  let width = img.width;
+  let height = img.height;
+  const scale = Math.min(1, MAX_DIMENSION / Math.max(width, height));
+  width = Math.max(1, Math.round(width * scale));
+  height = Math.max(1, Math.round(height * scale));
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("No se pudo procesar la imagen");
+
+  let quality = 0.82;
+  let blob;
+
+  while (true) {
+    canvas.width = width;
+    canvas.height = height;
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(img, 0, 0, width, height);
+
+    blob = await canvasToBlob(canvas, "image/jpeg", quality);
+
+    if (blob.size <= TARGET_FILE_SIZE_BYTES) break;
+    if (quality > 0.5) {
+      quality -= 0.08;
+      continue;
+    }
+    if (width <= 900 || height <= 900) break;
+
+    width = Math.round(width * 0.85);
+    height = Math.round(height * 0.85);
+  }
+
+  if (!blob || blob.size > TARGET_FILE_SIZE_BYTES) {
+    throw new Error(`No se pudo bajar de ${TARGET_FILE_SIZE_MB} MB`);
+  }
+
+  const nombreBase = file.name.replace(/\.[^/.]+$/, "");
+  return new File([blob], `${nombreBase}.jpg`, {
+    type: "image/jpeg",
+    lastModified: Date.now(),
+  });
+};
+
 const SalonFotos = () => {
   const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [ok, setOk] = useState(false);
 
-  const seleccionar = (e) => {
+  const seleccionar = async (e) => {
     const selected = Array.from(e.target.files);
-    setFiles((prev) => [...prev, ...selected]);
+    if (selected.length === 0) return;
 
-    const newPreviews = selected.map((file) => URL.createObjectURL(file));
+    setProcessing(true);
+    const validos = [];
+    const rechazados = [];
+
+    for (const file of selected) {
+      if (!file.type?.startsWith("image/")) {
+        rechazados.push(`${file.name}: no es una imagen`);
+        continue;
+      }
+
+      if (file.size > MAX_ORIGINAL_FILE_SIZE_BYTES) {
+        rechazados.push(`${file.name}: supera ${MAX_ORIGINAL_FILE_SIZE_MB} MB`);
+        continue;
+      }
+
+      try {
+        const comprimida = await comprimirImagen(file);
+        validos.push(comprimida);
+      } catch (errorCompresion) {
+        rechazados.push(`${file.name}: ${errorCompresion.message}`);
+      }
+    }
+
+    if (rechazados.length > 0) {
+      alert(
+        `Estas fotos no se pudieron agregar:\n\n${rechazados.join("\n")}`
+      );
+    }
+
+    if (validos.length === 0) {
+      setProcessing(false);
+      e.target.value = "";
+      return;
+    }
+
+    setFiles((prev) => [...prev, ...validos]);
+
+    const newPreviews = validos.map((file) => URL.createObjectURL(file));
     setPreview((prev) => [...prev, ...newPreviews]);
     setOk(false);
+    setProcessing(false);
+    e.target.value = "";
   };
 
   const quitarFoto = (index) => {
@@ -29,25 +147,54 @@ const SalonFotos = () => {
 
     try {
       setLoading(true);
-      const form = new FormData();
-      files.forEach((f) => form.append("foto", f));
+      let subidasOk = 0;
+      const errores = [];
 
-      await api.post("/fotos", form, {
-        onUploadProgress: (p) => {
-          const percent = Math.round((p.loaded * 100) / p.total);
-          setProgress(percent);
-        },
-      });
+      for (let i = 0; i < files.length; i += 1) {
+        const form = new FormData();
+        form.append("foto", files[i]);
+
+        try {
+          await api.post("/fotos", form, {
+            onUploadProgress: (p) => {
+              if (!p.total) return;
+              const porcentajeArchivo = Math.round((p.loaded * 100) / p.total);
+              const porcentajeTotal = Math.round(((i + porcentajeArchivo / 100) / files.length) * 100);
+              setProgress(porcentajeTotal);
+            },
+          });
+          subidasOk += 1;
+        } catch (errorArchivo) {
+          const detalle =
+            errorArchivo?.response?.data?.msg ||
+            errorArchivo?.response?.data?.error ||
+            "No se pudo subir una de las fotos";
+          errores.push(`${files[i].name}: ${detalle}`);
+        }
+      }
+
+      if (subidasOk === 0) {
+        throw new Error(errores[0] || "No se pudo subir ninguna foto");
+      }
 
       setOk(true);
-      setFiles([]);
-      setPreview([]);
+      if (subidasOk === files.length) {
+        setFiles([]);
+        setPreview([]);
+      } else {
+        alert(`Se subieron ${subidasOk} de ${files.length} fotos.\n\n${errores.join("\n")}`);
+      }
       setProgress(0);
       // Feedback de éxito por 5 segundos
       setTimeout(() => setOk(false), 5000);
     } catch (err) {
       console.error(err);
-      alert("Error al subir. Probá de a pocas fotos.");
+      const detalle =
+        err?.response?.data?.msg ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Error al subir";
+      alert(`Error al subir: ${detalle}`);
     } finally {
       setLoading(false);
     }
@@ -108,10 +255,15 @@ const SalonFotos = () => {
                   
                   <label className="aspect-square border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
                     <Plus size={24} className="text-gray-300" />
-                    <span className="text-[8px] uppercase tracking-tighter text-gray-400 mt-1">Sumar foto</span>
-                    <input type="file" accept="image/*" multiple onChange={seleccionar} className="hidden" />
+                    <span className="text-[8px] uppercase tracking-tighter text-gray-400 mt-1">
+                      {processing ? "Procesando..." : "Sumar foto"}
+                    </span>
+                    <input type="file" accept="image/*" multiple onChange={seleccionar} className="hidden" disabled={processing || loading} />
                   </label>
                 </div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wider">
+                  Se comprime automático a {TARGET_FILE_SIZE_MB} MB por foto
+                </p>
 
                 {/* BOTÓN Y PROGRESO */}
                 <div className="pt-4 space-y-4">
@@ -131,9 +283,9 @@ const SalonFotos = () => {
                   ) : (
                     <button
                       onClick={subir}
-                      disabled={files.length === 0}
+                      disabled={files.length === 0 || processing}
                       className={`w-full py-5 rounded-2xl font-bold uppercase text-[10px] tracking-[0.3em] transition-all flex items-center justify-center gap-3 ${
-                        files.length === 0 
+                        files.length === 0 || processing
                         ? "bg-gray-50 text-gray-300" 
                         : "bg-black text-white shadow-xl active:scale-95"
                       }`}
