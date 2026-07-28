@@ -83,27 +83,6 @@ const Salon = () => {
     } catch (e) { console.error(e); }
   };
 
-  const eliminarFoto = async (id) => {
-    try {
-      await api.delete(`/fotos/${id}`);
-      setFotos((prev) => {
-        const nuevas = prev.filter((f) => f._id !== id);
-        if (nuevas.length === 0) {
-          setCurrentIndex(0);
-          return nuevas;
-        }
-
-        if (prev[currentIndex]?._id === id) {
-          setCurrentIndex((prevIndex) => (prevIndex >= nuevas.length ? 0 : prevIndex));
-        }
-
-        return nuevas;
-      });
-    } catch (error) {
-      console.error("No se pudo eliminar la foto", error);
-    }
-  };
-
   if (fotos.length === 0) {
     return (
       <div className="h-screen w-screen bg-black flex items-center justify-center">
@@ -156,12 +135,6 @@ const Salon = () => {
           className="absolute inset-0 w-full h-full object-contain z-10 p-4 md:p-12"
           alt="Boda"
         />
-        <button
-          onClick={() => eliminarFoto(fotos[currentIndex]?._id)}
-          className="absolute top-6 right-6 z-30 bg-red-600/90 hover:bg-red-700 text-white text-sm font-semibold px-4 py-2 rounded-full shadow-lg"
-        >
-          Eliminar foto
-        </button>
       </AnimatePresence>
 
       {/* 🎈 FOTOS FLOTANTES (Recién subidas) */}
@@ -228,30 +201,6 @@ const Salon = () => {
           </div>
         </motion.div>
       )}
-
-      <div className="absolute top-10 left-10 z-50 max-w-[260px] max-h-[70vh] overflow-auto rounded-[1.5rem] bg-black/70 backdrop-blur-md border border-white/10 p-3">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-white/70">Fotos en pantalla</p>
-          <span className="text-xs text-white/60">{fotos.length}</span>
-        </div>
-        <div className="space-y-2">
-          {fotos.map((foto) => (
-            <div key={foto._id} className="relative group">
-              <img
-                src={optimizar(foto.url)}
-                alt="foto en pantalla"
-                className="w-full h-24 object-cover rounded-xl border border-white/10"
-              />
-              <button
-                onClick={() => eliminarFoto(foto._id)}
-                className="absolute top-1 right-1 bg-black/70 text-white text-[10px] px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                Eliminar
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Estilo para la animación de bounce suave en modo fiesta */}
       <style>{`

@@ -15,10 +15,12 @@ const AdminSalon = () => {
   });
 
   const [pendientes, setPendientes] = useState([]);
+  const [aprobadas, setAprobadas] = useState([]);
 
   useEffect(() => {
     cargarConfig();
     cargarPendientes();
+    cargarAprobadas();
   }, []);
 
   const cargarConfig = async () => {
@@ -31,6 +33,11 @@ const AdminSalon = () => {
     setPendientes(res.data);
   };
 
+  const cargarAprobadas = async () => {
+    const res = await api.get("/fotos");
+    setAprobadas(res.data.reverse().slice(0, 100));
+  };
+
   const actualizarConfig = async (nuevo) => {
     const res = await api.post("/salon/config", { ...config, ...nuevo });
     setConfig(res.data);
@@ -39,12 +46,15 @@ const AdminSalon = () => {
   const aprobarFoto = async (id) => {
     await api.put(`/fotos/${id}/aprobar`);
     setPendientes((prev) => prev.filter((f) => f._id !== id));
+    await cargarAprobadas();
   };
 
   const eliminarFoto = async (id) => {
     await api.delete(`/fotos/${id}`);
     setPendientes((prev) => prev.filter((f) => f._id !== id));
+    setAprobadas((prev) => prev.filter((f) => f._id !== id));
     await cargarPendientes();
+    await cargarAprobadas();
   };
 
   return (
@@ -136,7 +146,7 @@ const AdminSalon = () => {
       </section>
 
       {/* 📸 MODERACIÓN DE FOTOS */}
-      <section className="space-y-6">
+      <section className="space-y-8">
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-3">
             <ImageIcon className="text-[#B8860B]" size={24} />
@@ -173,6 +183,49 @@ const AdminSalon = () => {
                   <button
                     onClick={() => {
                       if (window.confirm("¿Eliminar definitivamente?")) eliminarFoto(foto._id);
+                    }}
+                    className="px-5 bg-red-50 text-red-500 py-4 rounded-xl hover:bg-red-500 hover:text-white transition-all"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-3">
+            <ImageIcon className="text-[#B8860B]" size={24} />
+            <h2 className="text-2xl font-serif text-black">Fotos aprobadas en pantalla</h2>
+          </div>
+          <span className="bg-[#B8860B]/10 text-[#B8860B] px-4 py-1 rounded-full text-xs font-bold">
+            {aprobadas.length}
+          </span>
+        </div>
+
+        {aprobadas.length === 0 ? (
+          <div className="bg-white/50 border-2 border-dashed border-gray-200 rounded-[2.5rem] py-20 text-center">
+            <p className="font-serif italic text-gray-400">No hay fotos aprobadas aún</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {aprobadas.map((foto) => (
+              <div key={foto._id} className="bg-white p-3 rounded-[2rem] border border-gray-100 shadow-sm group">
+                <div className="relative overflow-hidden rounded-[1.5rem]">
+                  <img
+                    src={foto.url}
+                    alt="aprobada"
+                    className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                </div>
+
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={() => {
+                      if (window.confirm("¿Eliminar esta foto de la pantalla?")) eliminarFoto(foto._id);
                     }}
                     className="px-5 bg-red-50 text-red-500 py-4 rounded-xl hover:bg-red-500 hover:text-white transition-all"
                   >
