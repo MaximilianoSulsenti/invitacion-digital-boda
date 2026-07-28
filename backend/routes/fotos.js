@@ -1,6 +1,6 @@
 import express from "express";
 import upload from "../middlewares/upload.js";
-import cloudinary from "../config/cloudinary.js";
+import { obtenerCloudinary } from "../config/cloudinary.js";
 import Foto from "../models/Foto.js";
 import Invitado from "../models/Invitado.js";
 import auth from "../middlewares/auth.js";
@@ -19,6 +19,7 @@ const extraerMensajeError = (error) => {
 
 const subirArchivoACloudinary = (file, invitadoId = null) =>
   new Promise((resolve, reject) => {
+    const cloudinary = obtenerCloudinary();
     const stream = cloudinary.uploader.upload_stream(
       {
         folder: "boda",
