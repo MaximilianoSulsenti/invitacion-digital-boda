@@ -27,7 +27,17 @@ const Salon = () => {
   });
 
   useEffect(() => {
+    const cargarConfig = async () => {
+      try {
+        const res = await api.get("/salon/config");
+        setConfig(res.data);
+      } catch (error) {
+        console.error("No se pudo cargar la configuración del salón", error);
+      }
+    };
+
     cargar();
+    cargarConfig();
 
     socket.on("salon-config", (nuevaConfig) => setConfig(nuevaConfig));
     
@@ -44,8 +54,14 @@ const Salon = () => {
       }, 8000);
     });
 
-    socket.on("eliminar-foto", (id) => {
+    socket.on("eliminar-foto", async (id) => {
       setFotos((prev) => prev.filter((f) => f._id !== id));
+      try {
+        const res = await api.get("/fotos");
+        setFotos(res.data.reverse().slice(0, 100));
+      } catch (error) {
+        console.error("No se pudo refrescar la lista de fotos", error);
+      }
     });
 
     return () => socket.off();
@@ -89,8 +105,21 @@ const Salon = () => {
       {/* ⚡️ MODO FIESTA: Luces de fondo */}
       {config.modoFiesta && (
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/40 via-transparent to-pink-900/40 animate-pulse" />
-          <div className="absolute top-0 left-0 w-full h-full opacity-30 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,0,180,0.35),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(0,255,255,0.25),_transparent_35%)] animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-purple-950/70 via-fuchsia-900/40 to-cyan-900/50" />
+          <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+          {Array.from({ length: 24 }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 rounded-full bg-yellow-300/80 animate-ping"
+              style={{
+                left: `${5 + (i % 8) * 12}%`,
+                top: `${8 + Math.floor(i / 8) * 18}%`,
+                animationDuration: `${1.2 + (i % 5) * 0.4}s`,
+                animationDelay: `${i * 0.08}s`,
+              }}
+            />
+          ))}
         </div>
       )}
 
@@ -149,7 +178,7 @@ const Salon = () => {
           animate={{ y: 0, opacity: 1 }}
           className="bg-black/40 backdrop-blur-md border border-white/10 px-10 py-4 rounded-full"
         >
-          <h2 className="text-white text-3xl font-serif tracking-wide italic">
+          <h2 className={`text-3xl font-serif tracking-wide italic ${config.modoFiesta ? "text-yellow-300 animate-pulse drop-shadow-[0_0_12px_rgba(255,255,255,0.7)]" : "text-white"}`}>
             {config.texto}
           </h2>
         </motion.div>

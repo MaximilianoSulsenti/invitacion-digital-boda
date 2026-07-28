@@ -44,6 +44,7 @@ const AdminSalon = () => {
   const eliminarFoto = async (id) => {
     await api.delete(`/fotos/${id}`);
     setPendientes((prev) => prev.filter((f) => f._id !== id));
+    await cargarPendientes();
   };
 
   return (
