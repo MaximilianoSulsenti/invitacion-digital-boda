@@ -1,6 +1,5 @@
 import express from "express";
 import Invitado from "../models/Invitado.js";
-import crypto from "crypto";
 
 const router = express.Router();
 

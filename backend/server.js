@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import invitadoRoutes from "./routes/invitados.js";
 import confirmacionRoutes from "./routes/confirmacion.js";
-import uploadRoutes from "./routes/upload.js";
 import fotosRoutes from "./routes/fotos.js";
 import salonRoutes from "./routes/salon.js";
 import path from "path";
@@ -38,7 +37,6 @@ app.get("/", (req, res) => {
 // Rutas
 app.use("/api/invitados", invitadoRoutes);
 app.use("/api/confirmaciones", confirmacionRoutes);
-app.use("/api/uploads", uploadRoutes);
 app.use("/api/fotos", fotosRoutes);
 app.use("/api/salon", salonRoutes); 
 app.use("/api/auth", authRoutes);

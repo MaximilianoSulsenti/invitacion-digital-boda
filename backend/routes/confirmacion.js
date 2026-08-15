@@ -19,9 +19,8 @@ router.post("/", async (req, res) => {
       asistencia,
       personas,
       mensaje,
-      // Si quieres guardar la canción también en el modelo Confirmacion, descomenta la siguiente línea:
-      // cancion,
-    });
+      cancion, 
+        });
     await confirmacion.save();
 
     // Marcar invitado como confirmado y guardar mensaje y cancion
