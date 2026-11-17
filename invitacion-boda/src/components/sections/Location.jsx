@@ -14,10 +14,9 @@ const Location = () => {
     },
     {
       nombre: "Salón Los Altos Del Rio",
-      direccion: "Salón de Eventos Los Altos Del Rio, Rosario, Santa Fe",
-      mapsUrl: "https://maps.google.com/?q=Los+Altos+Del+Rio+Rosario",
-      iframe: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3348.123456789!2d-60.63!3d-32.94!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzLCsDU2JzM0LjAiUyA2MMKwMzcnNDguMCJX!5e0!3m2!1ses!2sar!4v123456789",
-      // Pega aquí el embed real del salón
+      direccion: "Av. Carlos Colombres 1338, S2005 Rosario, Santa Fe",
+      mapsUrl: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Av. Carlos Colombres 1338, S2005 Rosario, Santa Fe"),
+      iframe: "https://maps.google.com/maps?q=" + encodeURIComponent("Av. Carlos Colombres 1338, S2005 Rosario, Santa Fe") + "&z=16&output=embed",
       icono: "🪩",
     }
   ];
